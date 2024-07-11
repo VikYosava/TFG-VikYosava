@@ -395,6 +395,13 @@ public class Generados {
     		// i es la posición de la población que se está reproduciendo	
     			nuevoGrupo.get(lastPos).setPadre(Padre+i);
     			
+    			//System.out.println(nuevoGrupo.get(lastPos).getPadre());
+    			// Padre es el código genético, junto con la generación en la
+    			
+    			//System.out.println("Hijo: " + lastPos);
+
+    			//System.out.println("Padre: " + Padre+i);
+    			
     			
     			/*
     			//System.out.println("Anterior:"+java.util.Arrays.toString(nuevoGrupo.get(i).getEspecie()));

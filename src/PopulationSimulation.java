@@ -147,7 +147,7 @@ public class PopulationSimulation {
         	 for (int i = 0; i < steps; i++) {
         		 
         		 if(j<listOfGenerados.get(i).size()) {
-        			 System.out.println(listOfGenerados.get(i).getCantID(j));
+        			 //System.out.println(listOfGenerados.get(i).getCantID(j));
             		 populationData.add(listOfGenerados.get(i).getCantID(j));
         		 }
 

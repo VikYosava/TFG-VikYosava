@@ -35,37 +35,97 @@ public class Funciones {
 	public static void GenerarGrafo(Generados grupo) {
         Graph grafoFinal=new SingleGraph("Poblaciones");
 		System.setProperty("org.graphstream.ui", "swing");		
-		
+			
+			for(int j=0;j<grupo.size();j++) {
+				// Se almacena la cantidad de individuos para un valor de Y
+				int cant=grupo.getCantID(j);
+				
+				//if(cant>1) {
+				short[] especie=grupo.getEspecieID(j);
+					
+				// Cada nodo tendrá el nombre de la especie y un número, para que no se repitan
+					
+				
+				String padre=grupo.get(j).getPadre();
+				//System.out.println(padre);
+				String especieString=java.util.Arrays.toString(especie)+j;
+					
+				grafoFinal.addNode(especieString).setAttribute("Cant", cant);
+					
+				grafoFinal.getNode(especieString).setAttribute("ui.style", "size: " +cant+"px;");
+					
+				if(padre!="No padre") {
+						//org.graphstream.graph.Node parentNode=grafoFinal.getNode("padre");
+					Node parentNode=grafoFinal.getNode(padre);
+					int cantPadre=((Number) parentNode.getAttribute("Cant")).intValue();
+					int generacion=grupo.getGeneracionID(j);
+					int base=generacion*10+50;
+
+					
+					double radius=(cantPadre+cant)/20+base;
+					double angleInc=2*Math.PI/parentNode.getDegree();
+					double angle = j*angleInc;
+					
+					
+					int x=((Number)parentNode.getAttribute("x")).intValue();
+					x=(int) (x+radius*Math.cos(angle));
+					int y=((Number)parentNode.getAttribute("y")).intValue();
+					y=(int) (y+radius*Math.sin(angle));
+					
+					grafoFinal.getNode(especieString).setAttribute("x", x);
+					grafoFinal.getNode(especieString).setAttribute("y", y);
+
+					
+					Edge edge=grafoFinal.addEdge(padre+especieString, padre, especieString);
+					//edge.setAttribute("weight", (cantPadre+cant)/20+base);
+					//edge.setAttribute("layout.weight", (cantPadre+cant)/20+base);
+				}
+				else {
+					grafoFinal.getNode(especieString).setAttribute("x", j*100);
+					grafoFinal.getNode(especieString).setAttribute("y", -j*100);
+
+				}
+					
+				
+			}
+			
 		/*for(int j=0;j<grupo.size();j++) {
 			// Se almacena la cantidad de individuos para un valor de Y
 			int cant=grupo.getCantID(j);
 			
 			//if(cant>1) {
-			short[] especie=grupo.getEspecieID(j);
+				short[] especie=grupo.getEspecieID(j);
 				
 				// Cada nodo tendrá el nombre de la especie y un número, para que no se repitan
-			String padre=grupo.get(j).getPadre();
-			String especieString=java.util.Arrays.toString(especie)+j;
 				
-			grafoFinal.addNode(especieString).setAttribute("Cant", cant);
-			grafoFinal.getNode(especieString).setAttribute("xyz", j*100, -j*100, 0);
-			grafoFinal.getNode(especieString).setAttribute("ui.style", "size: " +cant+"px;");
+				
+				String padre=grupo.get(j).getPadre();
+				String especieString=java.util.Arrays.toString(especie)+j;
+					
+				Node node=grafoFinal.addNode(especieString);
+				node.setAttribute("Cant", cant);
+				node.setAttribute("ui.style", "size: " +cant+"px;");
+				
+				if(padre!="No padre") {
+					//org.graphstream.graph.Node parentNode=grafoFinal.getNode("padre");
+					int cantPadre=((Number) grafoFinal.getNode(padre).getAttribute("Cant")).intValue();
+					int generacion=grupo.getGeneracionID(j);
+					int base=generacion*10+50;
+					Edge edge=grafoFinal.addEdge(padre+especieString, padre, especieString);
+					edge.setAttribute("weight", (cantPadre+cant)/20+base);
+					edge.setAttribute("layout.weight", (cantPadre+cant)/20+base);
+				}
+				else {
+					node.setAttribute("xy", -j * 100, 50*Math.cos(j*Math.PI));
+				}
+				
+				//grafoFinal.setAttribute("layout.force", 2);
+		        //grafoFinal.setAttribute("layout.quality", 4);
 			
-			if(padre!="No padre") {
-				//org.graphstream.graph.Node parentNode=grafoFinal.getNode("padre");
-				int cantPadre=((Number) grafoFinal.getNode(padre).getAttribute("Cant")).intValue();
-				int generacion=grupo.getGeneracionID(j);
-				int base=generacion*10+50;
-				Edge edge=grafoFinal.addEdge(padre+especieString, padre, especieString);
-				edge.setAttribute("weight", (cantPadre+cant)/20+base);
-				edge.setAttribute("layout.weight", (cantPadre+cant)/20+base);
-			
-			
-		
-		}*/
+		}
 		
 
-		
+		/*
 		BarabasiAlbertGenerator generator=new BarabasiAlbertGenerator();
 		generator.addSink(grafoFinal);
 		generator.begin();
@@ -120,18 +180,18 @@ public class Funciones {
 			//nodo.setAttribute("ui.class", "hoverable");
 			
 		}
-		
+		*/
 		//Node firstNode=grafoFinal.getNode(0);
 		//firstNode.setAttribute("xyz", 0,0,0);
 		
 		
 		
-		
-		//System.setProperty("org.graphstream.ui", "swing");
+	    grafoFinal.setAttribute("layout.force", 0); // Desactivar el layout automático
+
 		Viewer viewer = grafoFinal.display();
-		viewer.enableAutoLayout();
-		viewer.enableXYZfeedback(true);
-        viewer.getDefaultView().setMouseManager(new NodeClickMouseManager(viewer));
+		//viewer.enableAutoLayout();
+		//viewer.enableXYZfeedback(true);
+        //viewer.getDefaultView().setMouseManager(new NodeClickMouseManager(viewer));
 		//viewer.getDefaultView().getCamera().setViewCenter(0, 0, 0);
 		
 		
@@ -161,7 +221,7 @@ public class Funciones {
        	 for (int i = 0; i < steps; i++) {
        		 
        		 if(j<listOfGenerados.get(i).size()) {
-       			 System.out.println(listOfGenerados.get(i).getCantID(j));
+       			 //System.out.println(listOfGenerados.get(i).getCantID(j));
            		 populationData.add(listOfGenerados.get(i).getCantID(j));
        		 }
 
@@ -198,7 +258,7 @@ public class Funciones {
             	//double nodeZ = viewer.getDefaultView().getCamera().getViewCenter().z;            	
 
             	//Point3 nodeP= viewer.getDefaultView().getCamera().transformGuToPx(nodeX, nodeY, nodeZ);
-            	System.out.println("Node: "+node.getAttribute("x"));
+            	//System.out.println("Node: "+node.getAttribute("x"));
 
             	
             	/*double distance=calculateDistance(nodeP.x, nodeP.y, event.getX(), event.getY());
@@ -207,7 +267,7 @@ public class Funciones {
                     closestNode = node;
                 }*/
             }
-        	System.out.println("click: "+event.getX());
+        	//System.out.println("click: "+event.getX());
             
             
         }

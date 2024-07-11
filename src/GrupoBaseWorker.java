@@ -21,6 +21,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 
     	this.listOfGenerados=listOfLists;
     	listOfGenerados.add(nuevoGrupo1.clone());
+
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
         	// Recorre cada población de una generación y guarda el número de individuos de la población
 
 	        //System.out.println("gen i:"+i);
-	        	if(i%frecCatastrof==0) {
+	        	/*if(i%frecCatastrof==0) {
 
 	        		Random random = new Random();
 	                int binario = random.nextInt(2);
@@ -50,9 +51,19 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	                	}
 	                
 	                }
-	        	}
-	        listOfGenerados.add(nuevoGrupo.clone());
+	        	}*/
+	        	
+	        Generados prov=nuevoGrupo.clone();
+	        //System.out.println(" i: "+ i);
+	        for(int j=0;j<nuevoGrupo.size();j++) {
+	    		String padre=nuevoGrupo.get(j).getPadre();
+
+	    		prov.get(j).setPadre(padre);;
+	    	}
+	        listOfGenerados.add(prov);
+
         }
+		
 		/*grafoFinal.addNode("A" ).setAttribute("xy", 1, 6);
 		grafoFinal.addNode("B" ).setAttribute("xy", 2, 4);
 		grafoFinal.addNode("C" ).setAttribute("xy", 3, 5);

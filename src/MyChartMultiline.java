@@ -25,7 +25,7 @@ public class MyChartMultiline extends JComponent {
         	
         }
         public void updateList(int id, List<Integer> line){
-            System.out.println("updateList()");
+            //System.out.println("updateList()");
             ChartLine aux = chartMatrix.get(id);
             if(aux == null) {
             	float r = (float) Math.random();
@@ -48,7 +48,7 @@ public class MyChartMultiline extends JComponent {
 
         @Override
         public void paint(Graphics g) {
-            System.out.println("paint()");                 
+            //System.out.println("paint()");                 
             for(ChartLine l : chartMatrix.values()) {             	
             	paintMe(g, l);            	
             }
