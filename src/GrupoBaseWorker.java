@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.SwingWorker;
@@ -10,11 +11,16 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
     private float[][] probIndividuo;
     private int nrondas;
     private Viewer viewer;
+    private LinkedList<Generados> listOfGenerados;
 
     public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas) {
     	this.nuevoGrupo=nuevoGrupo1;
     	this.probIndividuo=probIndividuo;
     	this.nrondas=nrondas;
+        LinkedList<Generados> listOfLists = new LinkedList<>();
+
+    	this.listOfGenerados=listOfLists;
+    	listOfGenerados.add(nuevoGrupo1.clone());
 	}
 
 	@Override
@@ -26,6 +32,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 		for(int i=1;i<=nrondas;i++) {
         	//System.out.println("gen i:"+i);
         	nuevoGrupo.Generacion(probIndividuo,i);
+        	
         	// Recorre cada población de una generación y guarda el número de individuos de la población
 
 	        //System.out.println("gen i:"+i);
@@ -42,8 +49,9 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	                		nuevoGrupo.get(j).imprimirInformacion();
 	                	}
 	                
+	                }
 	        	}
-	        }
+	        listOfGenerados.add(nuevoGrupo.clone());
         }
 		/*grafoFinal.addNode("A" ).setAttribute("xy", 1, 6);
 		grafoFinal.addNode("B" ).setAttribute("xy", 2, 4);
@@ -92,7 +100,12 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	
 	protected void done() {
 		try {
-			Funciones.GenerarGrafo(nuevoGrupo, probIndividuo);
+			for(Generados todos:listOfGenerados) {
+				Funciones.GenerarGrafo(todos);
+
+			}
+			Funciones.GenerarLineas(listOfGenerados);
+			//Funciones.GenerarGrafo(nuevoGrupo, probIndividuo);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,6 @@
 import java.util.BitSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -105,6 +106,14 @@ public class Generados {
     
     public void setCantID(int index, int cant) {
     	elements.get(index).setCant(cant);
+    }
+    
+    public int[] getCant() {
+    	int[] cantidades = new int[elements.size()];
+    	for(int i=0;i<elements.size();i++) {
+    		cantidades[i]=elements.get(i).getCant();
+    	}
+    	return cantidades;
     }
     
     public float getAlimentoID(int index) {
