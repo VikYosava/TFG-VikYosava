@@ -20,7 +20,7 @@ public class Generados {
     	cont=1;
     }
 
-    public void addGenerado(int number, short[] binaryCode, short[] padre, int generacion, float alimento) {
+    public void addGenerado(int number, short[] binaryCode, String padre, int generacion, float alimento) {
     	PoblacionPorEspecie element = new PoblacionPorEspecie(number, binaryCode, padre, generacion, alimento, cont);
         elements.add(element);
         cont++;
@@ -117,7 +117,7 @@ public class Generados {
     	return cantidades;
     }
     
-    public short[] getPadreID(int index) {
+    public String getPadreID(int index) {
     	return elements.get(index).getPadre();
     }
     
@@ -390,9 +390,11 @@ public class Generados {
     			// LA REPRODUCCIÓN AQUI TIENE QUE SER SOLO DE LOS QUE SÍ MUTAN
 				short[] Padre=nuevoGrupo.getEspecieID(i).clone();
 				
+				String padreStr=java.util.Arrays.toString(Padre)+i;
+				
     			short[] Hijo=Reproducir(nuevoGrupo.getEspecieID(i),PMuttot);
 
-    			nuevoGrupo.addGenerado(1, Hijo, Padre, generacion, 1);
+    			nuevoGrupo.addGenerado(1, Hijo, padreStr, generacion, 1);
     			
     			//int lastPos=nuevoGrupo.size()-1;
     			

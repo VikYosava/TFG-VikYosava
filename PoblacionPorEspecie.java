@@ -7,14 +7,14 @@ public class PoblacionPorEspecie {
 	private int cant, generacion, posicion;
 	private short[] especie;
 	private float alimento;
-	private short[] padre;
+	private String padre;
 	
 	// cant es la cantidad de individuos que hay en cada especie
 	// especie es el array que contiene el código de genes (1 si tiene el gen, 0 si no)
 	// alimento es un valor que contiene la cantidad de alimento por especie total, determina la reproducción
 	// generacion es un valor que determina en qué iteración mutó y se generó la nueva especie
 	
-	public PoblacionPorEspecie(int cant, short[] especie, short[] padre, int generacion, float alimento, int posicion) {
+	public PoblacionPorEspecie(int cant, short[] especie, String padre, int generacion, float alimento, int posicion) {
 		this.cant = cant;
 		this.especie = especie;
 		this.generacion=generacion;
@@ -23,7 +23,7 @@ public class PoblacionPorEspecie {
 		this.padre=padre;
 	}
 	
-	public short[] getPadre() {
+	public String getPadre() {
 		return padre;
 	}
 	

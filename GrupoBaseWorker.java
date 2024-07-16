@@ -9,14 +9,15 @@ import org.graphstream.ui.view.Viewer;
 public class GrupoBaseWorker extends SwingWorker<Void, Void> {
     private Generados nuevoGrupo;
     private float[][] probIndividuo;
-    private int nrondas;
+    private int nrondas, cantEIni;
     private Viewer viewer;
     private LinkedList<Generados> listOfGenerados;
 
-    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas) {
+    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas, int fCantEInicial) {
     	this.nuevoGrupo=nuevoGrupo1;
     	this.probIndividuo=probIndividuo;
     	this.nrondas=nrondas;
+    	this.cantEIni=fCantEInicial;
         LinkedList<Generados> listOfLists = new LinkedList<>();
 
     	this.listOfGenerados=listOfLists;
@@ -107,7 +108,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	protected void done() {
 		try {
 			for(Generados todos:listOfGenerados) {
-				Funciones.GenerarGrafo(todos);
+				Funciones.GenerarGrafo(todos, cantEIni);
 
 			}
 			Funciones.GenerarLineas(listOfGenerados);

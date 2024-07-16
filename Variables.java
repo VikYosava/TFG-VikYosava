@@ -273,7 +273,7 @@ public class Variables {
 		        
 		        Generados GrupoBase= new Generados();
 		        for(int x=0; x<fCantEInicial;x++) {
-		        	short[] padre=IndBase[x].clone();
+		        	String padre=java.util.Arrays.toString(IndBase[x])+x;
 		        	GrupoBase.addGenerado(NPoblacion[x], IndBase[x], padre, ronda0, Alimento[x]);
 		        }
 
@@ -286,7 +286,7 @@ public class Variables {
 		        
 		        
 		     
-		        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas);
+		        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial);
 		        worker.execute();
 		        
 		        

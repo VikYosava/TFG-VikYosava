@@ -32,174 +32,79 @@ public class Funciones {
 
 
 	
-	public static void GenerarGrafo(Generados grupo) {
+	public static void GenerarGrafo(Generados grupo, int cantEini) {
         Graph grafoFinal=new SingleGraph("Poblaciones");
 		System.setProperty("org.graphstream.ui", "swing");
+		// Se crean los nodos padre
 		
-			for(int j=0;j<grupo.size();j++) {
-				// Se almacena la cantidad de individuos para un valor de Y
-				int cant=grupo.getCantID(j);
-				
-				//if(cant>1) {
-				short[] especie=grupo.getEspecieID(j);
-					
-				// Cada nodo tendrá el nombre de la especie y un número, para que no se repitan
-					
-				
-				String padre=java.util.Arrays.toString(grupo.getPadreID(j))+(grupo.getPosicionID(j)-1);
-				//System.out.println(padre);
-				String especieString=java.util.Arrays.toString(especie)+j;
-					
-				grafoFinal.addNode(especieString).setAttribute("Cant", cant);
-				
-				grafoFinal.getNode(especieString).setAttribute("ui.style", "size: " +cant+"px;");
-				System.out.println(padre);
-				System.out.println(especieString);
-
-				if(!padre.equals(especieString)) {
-						//org.graphstream.graph.Node parentNode=grafoFinal.getNode("padre");
-					Node parentNode=grafoFinal.getNode(padre);
-					int cantPadre=((Number) parentNode.getAttribute("Cant")).intValue();
-					int generacion=grupo.getGeneracionID(j);
-					int base=generacion*10+50;
-
-					
-					double radius=(cantPadre+cant)/20+base;
-					double angleInc=2*Math.PI;
-					double angle = j*angleInc/grupo.size();
-					
-					
-					
-					int x=((Number)parentNode.getAttribute("x")).intValue();
-					x=(int) (x+radius*Math.cos(angle));
-					
-
-					int y=((Number)parentNode.getAttribute("y")).intValue();
-					y=(int) (y+radius*Math.sin(angle));
-					
-					
-					grafoFinal.getNode(especieString).setAttribute("x", x);
-					grafoFinal.getNode(especieString).setAttribute("y", y);
-
-					
-					Edge edge=grafoFinal.addEdge(padre+especieString, padre, especieString);
-					//edge.setAttribute("weight", (cantPadre+cant)/20+base);
-					//edge.setAttribute("layout.weight", (cantPadre+cant)/20+base);
-				}
-				else {
-					grafoFinal.getNode(especieString).setAttribute("x", j*100);
-					grafoFinal.getNode(especieString).setAttribute("y", -j*100);
-					System.out.println("xget "+grafoFinal.getNode(especieString).getAttribute("x"));
-				}
-					
-				
+		for(int i=0;i<cantEini;i++) {
+			int cant=grupo.getCantID(i);
+			short[] especie=grupo.getEspecieID(i);
+			String especieString=java.util.Arrays.toString(especie)+i;
+			Node node=grafoFinal.addNode(especieString);
+			node.setAttribute("Cant", cant);
+			if(cant>50) {
+				cant=50;
 			}
 			
-		/*for(int j=0;j<grupo.size();j++) {
-			// Se almacena la cantidad de individuos para un valor de Y
-			int cant=grupo.getCantID(j);
+			String color=chooseColor(grupo, i);
+			node.setAttribute("ui.style", "size: " + cant + "px; fill-color: "+color+";");
 			
-			//if(cant>1) {
-				short[] especie=grupo.getEspecieID(j);
-				
-				// Cada nodo tendrá el nombre de la especie y un número, para que no se repitan
-				
-				
-				String padre=grupo.get(j).getPadre();
-				String especieString=java.util.Arrays.toString(especie)+j;
-					
-				Node node=grafoFinal.addNode(especieString);
-				node.setAttribute("Cant", cant);
-				node.setAttribute("ui.style", "size: " +cant+"px;");
-				
-				if(padre!="No padre") {
-					//org.graphstream.graph.Node parentNode=grafoFinal.getNode("padre");
-					int cantPadre=((Number) grafoFinal.getNode(padre).getAttribute("Cant")).intValue();
-					int generacion=grupo.getGeneracionID(j);
-					int base=generacion*10+50;
-					Edge edge=grafoFinal.addEdge(padre+especieString, padre, especieString);
-					edge.setAttribute("weight", (cantPadre+cant)/20+base);
-					edge.setAttribute("layout.weight", (cantPadre+cant)/20+base);
-				}
-				else {
-					node.setAttribute("xy", -j * 100, 50*Math.cos(j*Math.PI));
-				}
-				
-				//grafoFinal.setAttribute("layout.force", 2);
-		        //grafoFinal.setAttribute("layout.quality", 4);
-			
+			grafoFinal.getNode(especieString).setAttribute("x", i*100);
+			grafoFinal.getNode(especieString).setAttribute("y", -i*100);
+			//System.out.println("xget "+grafoFinal.getNode(especieString).getAttribute("x"));
 		}
 		
-
-		/*
-		BarabasiAlbertGenerator generator=new BarabasiAlbertGenerator();
-		generator.addSink(grafoFinal);
-		generator.begin();
-		
-		for(int j=0;j<grupo.size();j++) {
-			generator.nextEvents();
-		}
-		
-		int length=grupo.getEspecieID(0).length;		
-		generator.end();
-		
-		for(int j=0;j<grupo.size();j++) {
-			Node nodo=grafoFinal.getNode(j);
+		for(int j=cantEini;j<grupo.size();j++) {
+			// Se construye un nuevo nodo, determinamos su tamaño segun la cantidad de individuos
+			// de la especie, y el nombre por el código genético+la posición en la lista de especies
 			int cant=grupo.getCantID(j);
-			
-			short[] esp=grupo.getEspecieID(j);
-			float valmut=0;
-			float valalim=0;
-			float valmov=0;
-			for(int z=0;z<length;z++) {
-				if(z<length/3) {
-					valmut+=esp[z];
-				}
-				else if(z<2*length/3) {
-					valalim+=esp[z];
-				}
-				else {
-					valmov+=esp[z];	
-				}
+			short[] especie=grupo.getEspecieID(j);
+			String especieString=java.util.Arrays.toString(especie)+j;
+			Node node=grafoFinal.addNode(especieString);
+			node.setAttribute("Cant", cant);
+			if(cant>50) {
+				cant=50;
 			}
-			
-			int r = (int) (255 * valmut/length*2.5);
-		    int g = (int) (255 * valalim/length*2.5);
-		    int b = (int) (255 * valmov/length*2.5);
-		    
-		    String color = String.format("#%02x%02x%02x", r, g, b);
-
-			nodo.setAttribute("ui.style", "size: " + cant + "px; fill-color: "+color+";");
-			//System.out.println(java.util.Arrays.toString(esp));
-			//nodo.setAttribute("ui.label", java.util.Arrays.toString(esp));
-			
-			
-			
-			if(j>0) {
-				Edge edge=grafoFinal.getEdge(j);
+			String color=chooseColor(grupo, j);
+			node.setAttribute("ui.style", "size: " + cant + "px; fill-color: "+color+";");			
+			String padre=grupo.getPadreID(j);
+			// Comprobamos si el nodo es padre o hijo
+			if(padre!=null) {
+				// si es hijo, buscamos a su padre y lo unimos con un edge
+				Node parentNode=grafoFinal.getNode(padre);
+				int cantPadre=((Number) parentNode.getAttribute("Cant")).intValue();
+				
+				double radius=cantPadre;
+				double angleInc=2*Math.PI/(grupo.size()-cantEini);
+				double angle = (j-cantEini)*angleInc;
+				
+				double x=((Number)parentNode.getAttribute("x")).doubleValue();
+				x=x+radius*Math.cos(angle);
+				double y=((Number)parentNode.getAttribute("y")).doubleValue();
+				y=y+radius*Math.sin(angle);
+				
+				
+				node.setAttribute("x", x);
+				node.setAttribute("y", y);
+				
+				Edge edge=grafoFinal.addEdge(padre+especieString, padre, especieString);
 				//edge.setAttribute("ui.length", (grupo.getCantID(j)+grupo.getCantID(j-1)+grupo.getGeneracionID(j))*100);
 				edge.setAttribute("ui.style", "fill-color: " + color + ";");
-                int lengthEdge = (grupo.getCantID(j - 1))^5;
-				edge.setAttribute("ui.length", lengthEdge + "gu");
 			}
-			
-			//nodo.setAttribute("ui.class", "hoverable");
-			
+
 		}
-		*/
+		
 		//Node firstNode=grafoFinal.getNode(0);
 		//firstNode.setAttribute("xyz", 0,0,0);
 		
-		
-		
-	    grafoFinal.setAttribute("layout.force", 0); // Desactivar el layout automático
+	    grafoFinal.setAttribute("layout.force", 1); // Desactivar el layout automático
 
 		Viewer viewer = grafoFinal.display();
 		//viewer.enableAutoLayout();
 		//viewer.enableXYZfeedback(true);
         //viewer.getDefaultView().setMouseManager(new NodeClickMouseManager(viewer));
 		//viewer.getDefaultView().getCamera().setViewCenter(0, 0, 0);
-		
 		
 	}
 	
@@ -239,6 +144,33 @@ public class Funciones {
         JScrollPane scrollPane = new JScrollPane(chart);
         frame.add(scrollPane);
         frame.setVisible(true);
+	}
+	
+	private static String chooseColor(Generados grupo, int j){
+		short[] esp=grupo.getEspecieID(j);
+		int length=grupo.getEspecieID(0).length;
+		float valmut=0;
+		float valalim=0;
+		float valmov=0;
+		for(int z=0;z<length;z++) {
+			if(z<length/3) {
+				valmut+=esp[z];
+			}
+			else if(z<2*length/3) {
+				valalim+=esp[z];
+			}
+			else {
+				valmov+=esp[z];	
+			}
+		}
+		
+		int r = (int) (255 * valmut/length*2.5);
+	    int g = (int) (255 * valalim/length*2.5);
+	    int b = (int) (255 * valmov/length*2.5);
+	    
+	    String color = String.format("#%02x%02x%02x", r, g, b);
+
+	    return color;
 	}
 	
 	private static class NodeClickMouseManager extends DefaultMouseManager {
