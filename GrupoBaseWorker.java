@@ -4,20 +4,34 @@ import java.util.Random;
 import javax.swing.SwingWorker;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
+import org.graphstream.stream.file.FileSinkImages;
+import org.graphstream.stream.file.FileSinkImages.LayoutPolicy;
+import org.graphstream.stream.file.FileSinkImages.OutputPolicy;
+import org.graphstream.stream.file.FileSinkImages.OutputType;
+import org.graphstream.stream.file.images.Resolutions;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.graph.Graph;
+
+import org.graphstream.graph.implementations.SingleGraph;
+
+
+
 
 public class GrupoBaseWorker extends SwingWorker<Void, Void> {
     private Generados nuevoGrupo;
     private float[][] probIndividuo;
-    private int nrondas, cantEIni;
+    private int nrondas, cantEIni, frecCat;
+    private String direct;
     private Viewer viewer;
     private LinkedList<Generados> listOfGenerados;
 
-    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas, int fCantEInicial) {
+    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas, int fCantEInicial, String directorio, int frecCatastrof) {
     	this.nuevoGrupo=nuevoGrupo1;
     	this.probIndividuo=probIndividuo;
     	this.nrondas=nrondas;
     	this.cantEIni=fCantEInicial;
+    	this.direct=directorio;
+    	this.frecCat=frecCatastrof;
         LinkedList<Generados> listOfLists = new LinkedList<>();
 
     	this.listOfGenerados=listOfLists;
@@ -28,7 +42,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	@Override
     protected Void doInBackground() throws Exception {
     	
-		int frecCatastrof=5;
+		int frecCatastrof=frecCat;
 
 		// Recrea una generación por cada ronda
 		for(int i=1;i<=nrondas;i++) {
@@ -38,7 +52,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
         	// Recorre cada población de una generación y guarda el número de individuos de la población
 
 	        //System.out.println("gen i:"+i);
-	        	/*if(i%frecCatastrof==0) {
+	        	if(i%frecCatastrof==0) {
 
 	        		Random random = new Random();
 	                int binario = random.nextInt(2);
@@ -52,7 +66,7 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	                	}
 	                
 	                }
-	        	}*/
+	        	}
 	        	
 	        Generados prov=nuevoGrupo.clone();
 	        //System.out.println(" i: "+ i);
@@ -107,10 +121,24 @@ public class GrupoBaseWorker extends SwingWorker<Void, Void> {
 	
 	protected void done() {
 		try {
-			for(Generados todos:listOfGenerados) {
-				Funciones.GenerarGrafo(todos, cantEIni);
+			String outputDir="./"+direct+"/";
+			for (int i = 0; i < listOfGenerados.size(); i++) {
+	            Generados todos = listOfGenerados.get(i);
+	            Viewer grafoFinal = Funciones.GenerarGrafo(todos, cantEIni);
 
-			}
+	            new Thread(() -> {
+	                try {
+	                    // Esperar un breve momento para asegurar que el grafo esté completamente renderizado
+	                    Thread.sleep(listOfGenerados.size()*1500);
+	                    String filePath =outputDir+"graph"+grafoFinal.getGraphicGraph().getNodeCount()+".png";
+	                    Funciones.captureImage(grafoFinal, filePath);
+	                } catch (InterruptedException e) {
+	                    e.printStackTrace();
+	                }
+	            }).start();	
+	        }
+			
+			
 			Funciones.GenerarLineas(listOfGenerados);
 			//Funciones.GenerarGrafo(nuevoGrupo, probIndividuo);
 		} catch(Exception e) {

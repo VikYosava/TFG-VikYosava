@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
+import com.lowagie.text.Font;
+
 public class MyChartMultiline extends JComponent {
         private Map <Integer, ChartLine> chartMatrix;
         //Clave: identificado de la especie
@@ -48,25 +50,85 @@ public class MyChartMultiline extends JComponent {
 
         @Override
         public void paint(Graphics g) {
-            //System.out.println("paint()");                 
+            //System.out.println("paint()"); 
+        	Graphics2D graphics2d = (Graphics2D)g;
+        	
+        	graphics2d.setColor(Color.DARK_GRAY);
+        	graphics2d.fillRect(0, 0, getWidth(), getHeight());
+        	
+        	graphics2d.setColor(Color.LIGHT_GRAY);
+        	int width = getWidth();
+            int height = getHeight();
+        	
+        	graphics2d.drawLine(0, height-30, width, height-30);
+            graphics2d.drawLine(50,0,50,height);
+            
+            graphics2d.drawString("Generaciones", width / 2, height - 5);
+            graphics2d.drawString("Cantidad de Individuos", 10, 10);
+            
+            drawGrid(graphics2d);
+            
             for(ChartLine l : chartMatrix.values()) {             	
-            	paintMe(g, l);            	
+            	paintMe(graphics2d, l);            	
+            }
+            
+            graphics2d.setColor(Color.LIGHT_GRAY);
+            float hDiv = (float) (width - 50) / (float) (steps - 1);
+            for (int i = 0; i < steps; i++) {
+                graphics2d.drawString(String.valueOf(i), (int) (i * hDiv) + 50, height - 15);
+            }
+            
+            graphics2d.setColor(Color.LIGHT_GRAY);
+            float vDiv = (float) (height - 50) / (float) maxValue;
+            for (int i = 0; i <= maxValue; i += 10) {
+                int yPosition = height - 30 - (int) (i * vDiv);
+                graphics2d.drawString(String.valueOf(i), 10, yPosition);
+            }
+            
+        }
+        
+        private void drawGrid(Graphics2D graphics2d) {
+            graphics2d.setColor(Color.LIGHT_GRAY);
+            int width = getWidth();
+            int height = getHeight();
+            
+            // Dibuja líneas verticales
+            float hDiv = (float) (width - 50) / (float) (steps - 1);
+            for (int i = 0; i < steps; i++) {
+                int xPosition = (int) (i * hDiv) + 50;
+                graphics2d.drawLine(xPosition, 0, xPosition, height - 30);
+            }
+
+            // Dibuja líneas horizontales cada 50 unidades
+            float vDiv = (float) (height - 50) / (float) maxValue;
+            for (int i = 0; i <= maxValue; i += 10) {
+                int yPosition = height - 30 - (int) (i * vDiv);
+                graphics2d.drawLine(50, yPosition, width, yPosition);
             }
         }
         
         private void paintMe(Graphics g, ChartLine line){
-            Graphics2D graphics2d = (Graphics2D)g;
-            graphics2d.setColor(line.getColor());
+            g.setColor(line.getColor());
             
-            int width = getWidth();
-            int height = getHeight();
+            int width = getWidth()-50;
+            int height = getHeight()-50;
             
             float hDiv = (float)width/(float)(line.size()-1);
             float vDiv = (float)height/(float)maxValue;
             
             for(int i=0; i<line.size()-1; i++){
-                
-                int value1, value2;
+            	
+            	int value1 = line.get(i) != null ? line.get(i) : 0;
+            	int value2 = line.get(i + 1) != null ? line.get(i + 1) : 0;
+            	
+            	g.drawLine(
+            			(int) (i*hDiv)+50,
+            			getHeight()-30-(int)(value1*vDiv),
+            			(int)((i+1)*hDiv)+50,
+            			getHeight()-30-(int)(value2*vDiv)
+            		);
+            	
+                /*int value1, value2;
                 if(line.get(i)==null){
                     value1 = 0;
                 }else{
@@ -78,14 +140,14 @@ public class MyChartMultiline extends JComponent {
                     value2 = line.get(i+1);
                 }
                 
-                graphics2d.drawLine(
+                g.drawLine(
                         (int)(i*hDiv), 
                         height - ((int)(value1*vDiv)),
                         (int)((i+1)*hDiv), 
                         height - ((int)(value2*vDiv)));
+            }*/
             }
-            
-            graphics2d.drawRect(0, 0, width, height);
+            g.drawRect(50, 0, getWidth() - 50, getHeight() - 30);
         }
         
     }

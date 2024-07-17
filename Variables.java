@@ -51,8 +51,8 @@ public class Variables {
 
 	private JFrame frame;
 	private JTable tableMutaciones, tablaCantidades;
-	int Nmutaciones, CantEInicial, Niteraciones;
-	String txt;
+	int Nmutaciones, CantEInicial, Niteraciones, frecC;
+	String txt, direc;
 	private DefaultTableModel model, model2;
 	
 
@@ -73,18 +73,20 @@ public class Variables {
 		});
 	}*/
 
-	public Variables(int fCantEInicial, int fNmutaciones, int nIt, String mtxt) {
+	public Variables(int fCantEInicial, int fNmutaciones, int nIt, String mtxt, String dir, int frec) {
 		this.Nmutaciones=fNmutaciones;
 		this.CantEInicial=fCantEInicial;
 		this.Niteraciones=nIt;
 		this.txt=mtxt;
-		initialize(CantEInicial, Nmutaciones, Niteraciones, txt);
+		this.direc=dir;
+		this.frecC=frec;
+		initialize(CantEInicial, Nmutaciones, Niteraciones, txt, direc, frecC);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(int fCantEInicial, int fNmutaciones, int fNiteraciones, String txt) {
+	private void initialize(int fCantEInicial, int fNmutaciones, int fNiteraciones, String txt, String dir, int frec) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 800, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -284,9 +286,12 @@ public class Variables {
 		        
 		        int nrondas=fNiteraciones;
 		        
+		        String directorio=dir;
+		        int frecCat=frec;
+		        
 		        
 		     
-		        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial);
+		        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial,directorio, frecCat);
 		        worker.execute();
 		        
 		        
@@ -415,7 +420,7 @@ public class Variables {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Variables window = new Variables(CantEInicial, Nmutaciones, Niteraciones, txt);
+					Variables window = new Variables(CantEInicial, Nmutaciones, Niteraciones, txt, direc, frecC);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
