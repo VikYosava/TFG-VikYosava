@@ -1,6 +1,4 @@
-import java.util.BitSet;
-import java.util.LinkedList;
-import java.util.Queue;
+
 
 public class PoblacionPorEspecie {
 
@@ -14,22 +12,22 @@ public class PoblacionPorEspecie {
 	// alimento es un valor que contiene la cantidad de alimento por especie total, determina la reproducción
 	// generacion es un valor que determina en qué iteración mutó y se generó la nueva especie
 	
-	public PoblacionPorEspecie(int cant, short[] especie, int generacion, float alimento, int posicion) {
+	public PoblacionPorEspecie(int cant, short[] especie, String padre, int generacion, float alimento, int posicion) {
 		this.cant = cant;
 		this.especie = especie;
 		this.generacion=generacion;
 		this.alimento=alimento;
 		this.posicion=posicion;
-		this.padre="No padre";
+		this.padre=padre;
 	}
 	
 	public String getPadre() {
 		return padre;
 	}
 	
-	public void setPadre(String padre) {
+	/*public void setPadre(String padre) {
 		this.padre=padre;
-	}
+	}*/
 	
 	public int getCant() {
         return cant;

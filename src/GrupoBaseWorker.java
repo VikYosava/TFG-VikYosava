@@ -1,124 +1,115 @@
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.SwingWorker;
-import org.graphstream.graph.*;
-import org.graphstream.graph.implementations.*;
-import org.graphstream.ui.view.Viewer;
 
-public class GrupoBaseWorker extends SwingWorker<Void, Void> {
+import org.graphstream.stream.file.FileSinkImages.LayoutPolicy;
+import org.graphstream.stream.file.FileSinkImages.OutputType;
+import org.graphstream.stream.file.images.Resolutions;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.graph.Graph;
+import org.graphstream.stream.file.FileSinkImages;
+
+
+
+public class GrupoBaseWorker extends SwingWorker<List<Generados>, Generados> {
     private Generados nuevoGrupo;
     private float[][] probIndividuo;
-    private int nrondas;
-    private Viewer viewer;
-    private LinkedList<Generados> listOfGenerados;
+    private int nrondas, cantEIni, frecCat;
+    private String outputDir;
+    private Viewer view;
+    private int cont=0;
 
-    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas) {
+    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas, int fCantEInicial, String directorio, int frecCatastrof) {
     	this.nuevoGrupo=nuevoGrupo1;
     	this.probIndividuo=probIndividuo;
     	this.nrondas=nrondas;
-        LinkedList<Generados> listOfLists = new LinkedList<>();
+    	this.cantEIni=fCantEInicial;
+    	this.outputDir="./"+directorio+"/";
+    	this.frecCat=frecCatastrof;
 
-    	this.listOfGenerados=listOfLists;
-    	listOfGenerados.add(nuevoGrupo1.clone());
+    	
 
 	}
 
 	@Override
-    protected Void doInBackground() throws Exception {
-    	
-		int frecCatastrof=5;
+    protected List<Generados> doInBackground() throws Exception {
+		
+		
+		LinkedList<Generados> listOfGenerados=new LinkedList<>();
+		
+		int frecCatastrof=frecCat;
+		
+		Generados nGrupo=nuevoGrupo;
+    	listOfGenerados.add(nGrupo.clone());
 
 		// Recrea una generación por cada ronda
 		for(int i=1;i<=nrondas;i++) {
         	//System.out.println("gen i:"+i);
-        	nuevoGrupo.Generacion(probIndividuo,i);
+			nGrupo.Generacion(probIndividuo,i);
         	
         	// Recorre cada población de una generación y guarda el número de individuos de la población
 
 	        //System.out.println("gen i:"+i);
-	        	/*if(i%frecCatastrof==0) {
+	        	if(i%frecCatastrof==0) {
 
 	        		Random random = new Random();
 	                int binario = random.nextInt(2);
-	                int posicion=random.nextInt(nuevoGrupo.getEspecieID(0).length);
-	                for(int j=0;j<nuevoGrupo.size();j++) {
+	                int posicion=random.nextInt(nGrupo.getEspecieID(0).length);
+	                for(int j=0;j<nGrupo.size();j++) {
 
-	                	if(nuevoGrupo.getEspecieID(j)[posicion]==binario) {
-	                		nuevoGrupo.setCantID(j, 0);
-	                		System.out.println("Eliminado en ronda: "+i);
-	                		nuevoGrupo.get(j).imprimirInformacion();
+	                	if(nGrupo.getEspecieID(j)[posicion]==binario) {
+	                		nGrupo.setCantID(j, 0);
+	                		//System.out.println("Eliminado en ronda: "+i);
+	                		nGrupo.get(j).imprimirInformacion();
 	                	}
 	                
 	                }
-	        	}*/
+	        	}
 	        	
-	        Generados prov=nuevoGrupo.clone();
-	        //System.out.println(" i: "+ i);
-	        for(int j=0;j<nuevoGrupo.size();j++) {
-	    		String padre=nuevoGrupo.get(j).getPadre();
-
-	    		prov.get(j).setPadre(padre);;
-	    	}
+	        Generados prov=nGrupo.clone();
+	        
+            Thread.sleep((long) (250*Math.pow(i, 1.5)));
+	        publish(prov);
+	        
+	        // LAURA:
+	        //FileSinkImages f=new FileSinkImages(OutputType.PNG,Resolutions.VGA);
+	        //f.setLayoutPolicy(LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);
+			//String filePath =outputDir+"graph"+cont+".png";
+			//Graph grafoprueba = Funciones.GenerarGrafoG(prov, cantEIni);
+	        //f.writeAll(grafoprueba, filePath);
+	        
+	        
+            // Las capturas se realizan en blanco, debería calcular un evento para saber cuándo se han generado
+            
 	        listOfGenerados.add(prov);
 
         }
 		
-		/*grafoFinal.addNode("A" ).setAttribute("xy", 1, 6);
-		grafoFinal.addNode("B" ).setAttribute("xy", 2, 4);
-		grafoFinal.addNode("C" ).setAttribute("xy", 3, 5);
-		grafoFinal.addEdge("AB", "A", "B");
-		grafoFinal.addEdge("BC", "B", "C");
-		Graph grafoFinal=new SingleGraph("Poblaciones");
-		        System.setProperty("org.graphstream.ui", "swing");
-				
-		        System.out.println(GrupoBase.size());
-		        System.out.println(GrupoBase.getCantID(0));
-		        int cant=GrupoBase.getCantID(0);
-				String nombre=String.valueOf(cant);
-				grafoFinal.addNode("1").setAttribute("xy", cant, 0);
-				grafoFinal.addNode("2").setAttribute("xy", GrupoBase.getCantID(1), 1);
-
-				/*for(int j=1;j<GrupoBase.size();j++) {
-			    	
-					// Se almacena la cantidad de individuos para un valor de Y
-						int cant=GrupoBase.getCantID(j);
-						String nombre=String.valueOf(cant);
-						System.out.println(cant);
-						grafoFinal.addNode(nombre).setAttribute("xy", cant, j);
-					
-					}
-				
-				System.setProperty("org.graphstream.ui", "swing");
-				Viewer viewer = grafoFinal.display();
-				*/
-		/*Viewer viewer=grafoFinal.display();
-		viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
-		*/
-        
-        //System.out.println("\nNuevo Grupo:");
-        //nuevoGrupo.imprimirDatosGenerados();
-		return null;
+		
+		return listOfGenerados;
     }
-	/*private static void addGraphToConcatenatedGraph(Graph concatenatedGraph, Graph graph, int i) {
-        for (org.graphstream.graph.Node node : graph) {
-            concatenatedGraph.addNode(node.getId());
-        }
-        /*for (org.graphstream.graph.Edge edge : graph.getEachEdge()) {
-            concatenatedGraph.addEdge(edge.getId() + "_" + i, edge.getSourceNode().getId(), edge.getTargetNode().getId());
-        }
-    }*/
-	
+
 	protected void done() {
 		try {
-			for(Generados todos:listOfGenerados) {
-				Funciones.GenerarGrafo(todos);
-
-			}
-			Funciones.GenerarLineas(listOfGenerados);
+			
+			Funciones.GenerarLineas((LinkedList<Generados>) get());
 			//Funciones.GenerarGrafo(nuevoGrupo, probIndividuo);
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	protected void process(List<Generados> lista) {
+		if(view!=null) {
+			String filePath =outputDir+"graph"+cont+".png";
+	        Funciones.captureImage(view, filePath, 0);
+		}
+		for(Generados g:lista) {
+			view = Funciones.GenerarGrafo(g, cantEIni);
+			// hacer captura del anterior
+			cont++;
 		}
 	}
 }

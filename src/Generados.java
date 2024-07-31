@@ -1,6 +1,4 @@
-import java.util.BitSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -20,8 +18,8 @@ public class Generados {
     	cont=1;
     }
 
-    public void addGenerado(int number, short[] binaryCode, int generacion, float alimento) {
-    	PoblacionPorEspecie element = new PoblacionPorEspecie(number, binaryCode, generacion, alimento, cont);
+    public void addGenerado(int number, short[] binaryCode, String padre, int generacion, float alimento) {
+    	PoblacionPorEspecie element = new PoblacionPorEspecie(number, binaryCode, padre, generacion, alimento, cont);
         elements.add(element);
         cont++;
     }
@@ -50,6 +48,7 @@ public class Generados {
             PoblacionPorEspecie clonedPoblacion = new PoblacionPorEspecie(
                     poblacion.getCant(),
                     poblacion.getEspecie(),
+                    poblacion.getPadre(),
                     poblacion.getGeneracion(),
                     poblacion.getAlimento(),
                     poblacion.getPosicion()
@@ -114,6 +113,10 @@ public class Generados {
     		cantidades[i]=elements.get(i).getCant();
     	}
     	return cantidades;
+    }
+    
+    public String getPadreID(int index) {
+    	return elements.get(index).getPadre();
     }
     
     public float getAlimentoID(int index) {
@@ -383,17 +386,19 @@ public class Generados {
     			
 
     			// LA REPRODUCCIÓN AQUI TIENE QUE SER SOLO DE LOS QUE SÍ MUTAN
-				String Padre=java.util.Arrays.toString(nuevoGrupo.getEspecieID(i));
+				short[] Padre=nuevoGrupo.getEspecieID(i).clone();
+				
+				String padreStr=java.util.Arrays.toString(Padre)+i;
 				
     			short[] Hijo=Reproducir(nuevoGrupo.getEspecieID(i),PMuttot);
 
-    			nuevoGrupo.addGenerado(1, Hijo, generacion, 1);
+    			nuevoGrupo.addGenerado(1, Hijo, padreStr, generacion, 1);
     			
-    			int lastPos=nuevoGrupo.size()-1;
+    			//int lastPos=nuevoGrupo.size()-1;
     			
     			
     		// i es la posición de la población que se está reproduciendo	
-    			nuevoGrupo.get(lastPos).setPadre(Padre+i);
+    			//nuevoGrupo.get(lastPos).setPadre(Padre);
     			
     			//System.out.println(nuevoGrupo.get(lastPos).getPadre());
     			// Padre es el código genético, junto con la generación en la

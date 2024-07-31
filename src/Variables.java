@@ -1,58 +1,29 @@
 import java.awt.EventQueue;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
-
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.JTable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.text.Document;
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.JPanel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Random;
 
 public class Variables {
 
 	private JFrame frame;
 	private JTable tableMutaciones, tablaCantidades;
-	int Nmutaciones, CantEInicial, Niteraciones;
-	String txt;
+	int Nmutaciones, CantEInicial, Niteraciones, frecC;
+	String txt, direc;
 	private DefaultTableModel model, model2;
 	
 
@@ -73,18 +44,20 @@ public class Variables {
 		});
 	}*/
 
-	public Variables(int fCantEInicial, int fNmutaciones, int nIt, String mtxt) {
+	public Variables(int fCantEInicial, int fNmutaciones, int nIt, String mtxt, String dir, int frec) {
 		this.Nmutaciones=fNmutaciones;
 		this.CantEInicial=fCantEInicial;
 		this.Niteraciones=nIt;
 		this.txt=mtxt;
-		initialize(CantEInicial, Nmutaciones, Niteraciones, txt);
+		this.direc=dir;
+		this.frecC=frec;
+		initialize(CantEInicial, Nmutaciones, Niteraciones, txt, direc, frecC);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(int fCantEInicial, int fNmutaciones, int fNiteraciones, String txt) {
+	private void initialize(int fCantEInicial, int fNmutaciones, int fNiteraciones, String txt, String dir, int frec) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 800, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -273,7 +246,8 @@ public class Variables {
 		        
 		        Generados GrupoBase= new Generados();
 		        for(int x=0; x<fCantEInicial;x++) {
-		        	GrupoBase.addGenerado(NPoblacion[x], IndBase[x], ronda0, Alimento[x]);
+		        	String padre=java.util.Arrays.toString(IndBase[x])+x;
+		        	GrupoBase.addGenerado(NPoblacion[x], IndBase[x], padre, ronda0, Alimento[x]);
 		        }
 
 		        System.out.println("\nPoblaciones:");
@@ -283,9 +257,12 @@ public class Variables {
 		        
 		        int nrondas=fNiteraciones;
 		        
+		        String directorio=dir;
+		        int frecCat=frec;
+		        
 		        
 		     
-		        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas);
+		        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial,directorio, frecCat);
 		        worker.execute();
 		        
 		        
@@ -414,7 +391,7 @@ public class Variables {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Variables window = new Variables(CantEInicial, Nmutaciones, Niteraciones, txt);
+					Variables window = new Variables(CantEInicial, Nmutaciones, Niteraciones, txt, direc, frecC);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

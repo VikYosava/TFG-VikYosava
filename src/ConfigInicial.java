@@ -1,13 +1,10 @@
 import java.awt.EventQueue;
-import javax.swing.SwingWorker;
-
 import javax.swing.JFrame;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 import java.awt.Font;
 
 public class ConfigInicial {
@@ -17,6 +14,8 @@ public class ConfigInicial {
 	private JFormattedTextField fCantEInicial;
 	private JFormattedTextField fNIteraciones;
 	private JFormattedTextField fMatrixtxt;
+	private JFormattedTextField fDirect;
+	private JFormattedTextField ffCatastrof;
 	private JButton btnOkk;
 
 	/**
@@ -51,7 +50,7 @@ public class ConfigInicial {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 209, 370);
+		frame.setBounds(100, 100, 209, 423);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -60,28 +59,38 @@ public class ConfigInicial {
 		frame.getContentPane().add(lblNmutaciones);
 		
 		JLabel lblNespeciesIni = new JLabel("Especies Iniciales (Nº entero)");
-		lblNespeciesIni.setBounds(10, 125, 175, 13);
+		lblNespeciesIni.setBounds(10, 115, 175, 13);
 		frame.getContentPane().add(lblNespeciesIni);
 		
 		fNmutaciones = new JFormattedTextField();
 		fNmutaciones.setText("10");
-		fNmutaciones.setBounds(10, 100, 175, 19);
+		fNmutaciones.setBounds(10, 90, 175, 19);
 		frame.getContentPane().add(fNmutaciones);
 		
 		fCantEInicial = new JFormattedTextField();
 		fCantEInicial.setText("1");
-		fCantEInicial.setBounds(10, 150, 175, 19);
+		fCantEInicial.setBounds(10, 130, 175, 19);
 		frame.getContentPane().add(fCantEInicial);
 		
 		fNIteraciones = new JFormattedTextField();
-		fNIteraciones.setText("30");
-		fNIteraciones.setBounds(10, 200, 175, 19);
+		fNIteraciones.setText("10");
+		fNIteraciones.setBounds(10, 170, 175, 19);
 		frame.getContentPane().add(fNIteraciones);
 		
 		fMatrixtxt = new JFormattedTextField();
 		fMatrixtxt.setText("matrix.txt");
 		fMatrixtxt.setBounds(10, 250, 175, 19);
 		frame.getContentPane().add(fMatrixtxt);
+		
+		fDirect = new JFormattedTextField();
+		fDirect.setText("Imagenes");
+		fDirect.setBounds(10, 290, 175, 19);
+		frame.getContentPane().add(fDirect);
+		
+		ffCatastrof = new JFormattedTextField();
+		ffCatastrof.setText("5");
+		ffCatastrof.setBounds(10, 210, 175, 19);
+		frame.getContentPane().add(ffCatastrof);
 		
 		btnOkk = new JButton("OK");
 		btnOkk.addActionListener(new ActionListener() {
@@ -90,15 +99,17 @@ public class ConfigInicial {
 				int cEIni = Integer.parseInt(fCantEInicial.getText());
 				int nIt = Integer.parseInt(fNIteraciones.getText());
 				String txt= fMatrixtxt.getText();
-				Variables newVariables = new Variables(cEIni, nMut, nIt, txt);
+				String dir=fDirect.getText();
+				int frec=Integer.parseInt(ffCatastrof.getText());
+				Variables newVariables = new Variables(cEIni, nMut, nIt, txt, dir, frec);
 				//newVariables.setVisible(true);
 			}
 		});
-		btnOkk.setBounds(59, 302, 85, 21);
+		btnOkk.setBounds(60, 344, 85, 21);
 		frame.getContentPane().add(btnOkk);
 		
 		JLabel lblNIteraciones = new JLabel("Cantidad Iteraciones (Nº entero)");
-		lblNIteraciones.setBounds(10, 175, 175, 13);
+		lblNIteraciones.setBounds(10, 155, 175, 13);
 		frame.getContentPane().add(lblNIteraciones);
 		
 		JLabel lblIntrdoduceLasVariables = new JLabel("Intrdoduce las variables de la ");
@@ -117,8 +128,16 @@ public class ConfigInicial {
 		frame.getContentPane().add(lblDeProbabilidades);
 		
 		JLabel lblTablaMut = new JLabel("Tabla Mutaciones (\"nombre.txt\")");
-		lblTablaMut.setBounds(10, 225, 175, 13);
+		lblTablaMut.setBounds(10, 235, 175, 13);
 		frame.getContentPane().add(lblTablaMut);
+		
+		JLabel lblTablaMut_1 = new JLabel("Tabla Mutaciones (\"nombre.txt\")");
+		lblTablaMut_1.setBounds(10, 275, 175, 13);
+		frame.getContentPane().add(lblTablaMut_1);
+		
+		JLabel lblFrecuenciaCatstrofesn = new JLabel("Frecuencia Catástrofes (Nº entero)");
+		lblFrecuenciaCatstrofesn.setBounds(10, 195, 175, 13);
+		frame.getContentPane().add(lblFrecuenciaCatstrofesn);
 		
 		
 	}
