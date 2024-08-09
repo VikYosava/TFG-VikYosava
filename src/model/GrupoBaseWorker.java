@@ -1,35 +1,40 @@
 package model;
+import java.awt.BorderLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import javax.swing.JPanel;
 
 import javax.swing.SwingWorker;
 
 import org.graphstream.stream.file.FileSinkImages.LayoutPolicy;
-import org.graphstream.stream.file.FileSinkImages.OutputType;
 import org.graphstream.stream.file.images.Resolutions;
+import org.graphstream.ui.swing_viewer.ViewPanel;
+import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
+
+import view.MainFrame;
+
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.file.FileSinkImages;
 
 
 
-public class GrupoBaseWorker extends SwingWorker<List<Generados>, Generados> {
+public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
     private Generados nuevoGrupo;
     private float[][] probIndividuo;
     private int nrondas, cantEIni, frecCat;
     private String outputDir;
-    private Viewer view;
-    private int cont=0;
+    private MainFrame mainFrame;
 
-    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas, int fCantEInicial, String directorio, int frecCatastrof) {
+    public GrupoBaseWorker(Generados nuevoGrupo1, float[][] probIndividuo, int nrondas, int fCantEInicial, String directorio, int frecCatastrof, MainFrame mainFrame) {
     	this.nuevoGrupo=nuevoGrupo1;
     	this.probIndividuo=probIndividuo;
     	this.nrondas=nrondas;
     	this.cantEIni=fCantEInicial;
     	this.outputDir="./"+directorio+"/";
     	this.frecCat=frecCatastrof;
-
+    	this.mainFrame=mainFrame;
     	
 
 	}
@@ -37,7 +42,12 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Generados> {
 	@Override
     protected List<Generados> doInBackground() throws Exception {
 		
-		
+		System.setProperty("org.graphstream.ui", "swing");
+		FileSinkImages f = FileSinkImages.createDefault();
+        f.setOutputType(FileSinkImages.OutputType.PNG);
+        f.setResolution(Resolutions.VGA);
+        f.setLayoutPolicy(LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);
+        
 		LinkedList<Generados> listOfGenerados=new LinkedList<>();
 		
 		int frecCatastrof=frecCat;
@@ -71,8 +81,12 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Generados> {
 	        	
 	        Generados prov=nGrupo.clone();
 	        
-            Thread.sleep((long) (250*Math.pow(i, 1.5)));
-	        publish(prov);
+	        Graph grafoprueba = Funciones.GenerarGrafoG(nGrupo, cantEIni);
+	        publish(grafoprueba);
+	        
+	        // LAURA: captura de las imagenes 1 a nrondas
+	        String filePath =outputDir+"graph"+i+".png";			
+	        f.writeAll(grafoprueba, filePath);
 	        
 	        // LAURA:
 	        //FileSinkImages f=new FileSinkImages(OutputType.PNG,Resolutions.VGA);
@@ -96,21 +110,18 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Generados> {
 		try {
 			
 			Funciones.GenerarLineas((LinkedList<Generados>) get());
+			System.out.println("mostrando...");
+			mainFrame.showChartPanel(Funciones.GenerarLineas((LinkedList<Generados>) get()));
 			//Funciones.GenerarGrafo(nuevoGrupo, probIndividuo);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	protected void process(List<Generados> lista) {
-		if(view!=null) {
-			String filePath =outputDir+"graph"+cont+".png";
-	        Funciones.captureImage(view, filePath, 0);
+	/*protected void process(List<Graph> lista) {
+		for(Graph g:lista) {
+			Viewer viewer = g.display();
+	        viewer.getDefaultView().enableMouseOptions();
 		}
-		for(Generados g:lista) {
-			view = Funciones.GenerarGrafo(g, cantEIni);
-			// hacer captura del anterior
-			cont++;
-		}
-	}
+	}*/
 }

@@ -137,9 +137,9 @@ public class MainController {
 			        String directorio=dir;
 			        int frecCat=frec;
 			        
-			        
+			        //mainFrame.clearTabs();
 			     
-			        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial,directorio, frecCat);
+			        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial,directorio, frecCat, mainFrame);
 			        worker.execute();
 
 			        

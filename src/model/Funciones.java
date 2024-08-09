@@ -2,10 +2,14 @@ package model;
 
 
 import org.graphstream.graph.*;
+import javax.swing.JPanel;
+
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
+
+import view.MainFrame;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,6 +25,8 @@ import javax.swing.SwingUtilities;
 
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swing_viewer.ViewPanel;
+
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
 public class Funciones {
@@ -242,10 +248,10 @@ public class Funciones {
 		
 	    //grafoFinal.setAttribute("layout.force", 1); // Desactivar el layout automático
 
-		Viewer viewer = grafoFinal.display();
+		//Viewer viewer = grafoFinal.display();
 		//viewer.disableAutoLayout();
 		//viewer.enableXYZfeedback(true);
-        viewer.getDefaultView().enableMouseOptions();
+        //viewer.getDefaultView().enableMouseOptions();
         //viewer.getDefaultView().setMouseManager(new NodeClickMouseManager(viewer, grafoFinal));
         //double centx=((Number)grafoFinal.getNode(0).getAttribute("x")).doubleValue();
         //double centy=((Number)grafoFinal.getNode(0).getAttribute("y")).doubleValue();
@@ -277,11 +283,13 @@ public class Funciones {
         }
     }
 	
-	public static void GenerarLineas(LinkedList<Generados> listOfGenerados) {
-		JFrame frame = new JFrame("Simulación de Poblaciones");
+	public static JScrollPane GenerarLineas(LinkedList<Generados> listOfGenerados) {
+		
+		//JPanel chartPanel = new JPanel(new BorderLayout());
+		/*JFrame frame = new JFrame("Simulación de Poblaciones");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
-        frame.setLayout(new GridLayout(1, 1)); // Single panel layout
+        frame.setLayout(new GridLayout(1, 1));*/ // Single panel layout
 
         // Assuming each Generados object has population data accessible
         int steps = listOfGenerados.size(); // Number of generations
@@ -311,8 +319,10 @@ public class Funciones {
         }
 
         JScrollPane scrollPane = new JScrollPane(chart);
-        frame.add(scrollPane);
-        frame.setVisible(true);
+        return scrollPane;
+        //chartPanel.add(scrollPane, BorderLayout.CENTER);
+        //mainFrame.add(scrollPane);
+        //rame.setVisible(true);
 	}
 	
 	private static String chooseColor(Generados grupo, int j){

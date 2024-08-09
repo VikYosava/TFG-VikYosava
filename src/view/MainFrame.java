@@ -7,6 +7,9 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 // DEBERÍA SER EL MAINFRAME ENCARGADO DE LA VISTA
 
@@ -16,6 +19,7 @@ public class MainFrame extends JFrame {
 
     private ConfigInicial configInicialPanel;
     private Variables variablesPanel;
+    private JScrollPane scrollPane;
 	
 	public MainFrame() {
         setTitle("Simulación");
@@ -24,7 +28,16 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         configInicialPanel = new ConfigInicial();
+        
         add(configInicialPanel, BorderLayout.CENTER);
+    }
+	
+	public void showChartPanel(JScrollPane scrollPane) {
+        getContentPane().removeAll();
+        this.scrollPane = scrollPane;
+        add(scrollPane, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 	
 	private void showConfigInicialPanel() {

@@ -1,5 +1,4 @@
 package model;
-import java.awt.LayoutManager;
 
 public class Configuracion {
 	int Nmutaciones, CantEInicial, Niteraciones, frecC;
