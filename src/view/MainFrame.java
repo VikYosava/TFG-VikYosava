@@ -63,6 +63,14 @@ public class MainFrame extends JFrame {
         repaint();
     }
 	
+	public void goBackToMainFrame(ConfigInicial configInicialPanel) {
+		getContentPane().removeAll();
+		this.configInicialPanel=configInicialPanel;
+		add(configInicialPanel, BorderLayout.CENTER);
+		revalidate();
+		repaint();
+	}
+	
 	public ConfigInicial getConfigInicialPanel() {
 		return configInicialPanel;
 	}

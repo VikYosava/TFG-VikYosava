@@ -1,21 +1,13 @@
-import java.awt.Dimension;
-import java.awt.Graphics;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.GridLayout;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.Graphics2D;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
+
+import model.Generados;
+
 
 
 public class PopulationSimulation {
@@ -49,7 +41,7 @@ public class PopulationSimulation {
         
         
         Generados GrupoBase= new Generados();
-        GrupoBase.addGenerado(TPoblacion, IndBase, ronda0, Alimento);
+        //GrupoBase.addGenerado(TPoblacion, IndBase, ronda0, Alimento);
         
         System.out.println("\nPoblaciones:");
         GrupoBase.imprimirDatosGenerados();
@@ -110,7 +102,7 @@ public class PopulationSimulation {
 
          // Assuming each Generados object has population data accessible
          int steps = listOfGenerados.size(); // Number of generations
-         MyChartMultiline chart = new MyChartMultiline(steps);
+         //MyChartMultiline chart = new MyChartMultiline(steps);
 
          
          //listOfGenerados.size es el número de generaciones
@@ -150,91 +142,14 @@ public class PopulationSimulation {
         		 }
 
         	 }
-             chart.updateList(j, populationData);
+             //chart.updateList(j, populationData);
 
          }
 
-         JScrollPane scrollPane = new JScrollPane(chart);
-         frame.add(scrollPane);
+         //JScrollPane scrollPane = new JScrollPane(chart);
+         //frame.add(scrollPane);
          frame.setVisible(true);
     }
 }
     
-
-
-
-
-	
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-        
-        
-        /*PoblacionEsp[0] = TPoblacion;
-
-        int[][] PoblacionInd = new int[Nmutaciones][NEspecies];
-
-        double[][] ProbIndividuo = new double[3][Nmutaciones];
-
-        TPoblacion = PoblacionEsp[0];
-        for (int i = 0; i < PoblacionEsp.length; i++) {
-            TPoblacion += PoblacionEsp[i];
-        }
-
-        int NGeneraciones = 10;
-
-        int[][] Generados = new int[NGeneraciones][NEspecies];
-        Generados = Generacion(PoblacionEsp, PoblacionInd, ProbIndividuo, NGeneraciones, Individuo);
-
-        // Printing Generados and PoblacionInd arrays
-        System.out.println("Generados:");
-        for (int i = 0; i < Generados.length; i++) {
-            for (int j = 0; j < Generados[i].length; j++) {
-                System.out.print(Generados[i][j] + " ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("\nPoblacionInd:");
-        for (int i = 0; i < PoblacionInd.length; i++) {
-            for (int j = 0; j < PoblacionInd[i].length; j++) {
-                System.out.print(PoblacionInd[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public static int[][] Generacion(int[] PoblacionEsp, int[][] PoblacionInd, double[][] ProbIndividuo,
-                                     int NGeneraciones, int[] Individuo) {
-        // Logic for generation evolution goes here
-        // This method simulates the generation updates based on population, probabilities, etc.
-        // You can implement the logic for the Generacion method following the MATLAB code.
-        // Return the updated Generados array
-        return new int[NGeneraciones][PoblacionEsp.length];
-    }*/
 

@@ -12,7 +12,9 @@ import org.graphstream.ui.view.Viewer;
 import view.MainFrame;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -27,6 +29,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 public class Funciones {
@@ -283,13 +286,12 @@ public class Funciones {
         }
     }
 	
-	public static JScrollPane GenerarLineas(LinkedList<Generados> listOfGenerados) {
+	public static void GenerarLineas(LinkedList<Generados> listOfGenerados) {
 		
-		//JPanel chartPanel = new JPanel(new BorderLayout());
-		/*JFrame frame = new JFrame("Simulación de Poblaciones");
+		JFrame frame = new JFrame("Simulación de Poblaciones");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
-        frame.setLayout(new GridLayout(1, 1));*/ // Single panel layout
+        frame.setLayout(new GridLayout(1, 1)); // Single panel layout
 
         // Assuming each Generados object has population data accessible
         int steps = listOfGenerados.size(); // Number of generations
@@ -302,7 +304,7 @@ public class Funciones {
         
         // cada linea del array debe contener todos los valores de 1 generación
         
-        int sizeGeneradosFinal=listOfGenerados.get(steps-1).size();
+        //int sizeGeneradosFinal=listOfGenerados.get(steps-1).size();
 		for (int j = 0; j < listOfGenerados.get(steps-1).size(); j++) {
    		 List<Integer> populationData = new ArrayList<>();
 
@@ -318,12 +320,32 @@ public class Funciones {
 
         }
 
-        JScrollPane scrollPane = new JScrollPane(chart);
-        return scrollPane;
-        //chartPanel.add(scrollPane, BorderLayout.CENTER);
-        //mainFrame.add(scrollPane);
-        //rame.setVisible(true);
+		JScrollPane scrollPane = new JScrollPane(chart);
+        frame.add(scrollPane);
+        frame.setVisible(true);
 	}
+	
+	public static float[][] readMatrixFromFile(String filename) {
+        float[][] matrix = new float[4][];
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            int row = 0;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(" ");
+                if (row < 4) {
+                    matrix[row] = new float[values.length];  // assuming square matrix for simplicity
+                
+                    for (int col = 0; col < values.length; col++) {
+                    	matrix[row][col] = Float.parseFloat(values[col]);
+                    }
+                }
+                row++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return matrix;
+    }
 	
 	private static String chooseColor(Generados grupo, int j){
 		short[] esp=grupo.getEspecieID(j);

@@ -280,6 +280,10 @@ public class Variables extends JPanel{
 	public JButton getBtnOk() {
         return btnOk;
     }
+	
+	public JButton getBtnCancel() {
+		return btnCancel;
+	}
 
 	public void setVisible(boolean b) {
 		// TODO Auto-generated method stub

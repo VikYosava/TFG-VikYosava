@@ -1,7 +1,5 @@
 package controller;
 
-import model.GrupoBaseWorker;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,7 +11,9 @@ import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
 
 import model.Configuracion;
+import model.Funciones;
 import model.Generados;
+import view.ConfigInicial;
 import view.MainFrame;
 import view.Variables;
 
@@ -21,6 +21,7 @@ public class MainController {
 
 	private MainFrame mainFrame;
 	private Configuracion configuracion;
+	private ConfigInicial configInicial;
 	private Variables variablesPanel;
 	private DefaultTableModel model, model2;
 	
@@ -31,6 +32,7 @@ public class MainController {
 	}
 
 	private void initialize() {
+		//mainFrame.showConfigInicialPanel();
 		mainFrame.getConfigInicialPanel().getBtnOkk().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -45,8 +47,8 @@ public class MainController {
 	            variablesPanel = new Variables(configuracion.getCantEInicial(), 
 	            		configuracion.getNMutaciones(), configuracion.getNIteraciones(),
 	            		configuracion.getMatrixtxt(), configuracion.getDirect(), configuracion.getCatastrof());
-	            mainFrame.switchToVariablesPanel(variablesPanel);
-
+	            mainFrame.showVariablesPanel(variablesPanel);
+	            
 	            addVariablesPanelListeners();
 			}
 	    });
@@ -72,53 +74,58 @@ public class MainController {
             }
         });
 		
+		variablesPanel.getBtnCancel().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				configInicial=new ConfigInicial();
+				mainFrame.goBackToMainFrame(configInicial);
+				initialize();
+			}
+		});
+		
 		variablesPanel.getBtnOk().addActionListener(new ActionListener() {
 			@Override
+	        public void actionPerformed(ActionEvent e) {
+				// Obtén los datos de la tabla de mutaciones
+				int fCantEInicial = configuracion.getCantEInicial();
+				int fNmutaciones = configuracion.getNMutaciones();
+				int fNiteraciones = configuracion.getNIteraciones();
+				String txt = configuracion.getMatrixtxt();
+				String dir = configuracion.getDirect();
+				int frec = configuracion.getCatastrof();
+				short[][] IndBase = new short[fCantEInicial][fNmutaciones];
+				int[] NPoblacion = new int[fCantEInicial];
+				int[] Alimento = new int[fCantEInicial];
+				model = variablesPanel.getModel();
+				model2 = variablesPanel.getModel2();
 
-	            public void actionPerformed(ActionEvent e) {
-	                // Obtén los datos de la tabla de mutaciones
+				for (int j = 0; j < fCantEInicial; j++) {
+					NPoblacion[j] = Integer.parseInt(model2.getValueAt(j, 0).toString());
+					Alimento[j] = Integer.parseInt(model2.getValueAt(j, 1).toString());
+					for (int i = 0; i < fNmutaciones; i++) {
+						Short cellVal = Short.parseShort(model.getValueAt(j, i).toString());
+						IndBase[j][i] = cellVal;
+					}
+				}
 
-	                int fCantEInicial = configuracion.getCantEInicial();
-	                int fNmutaciones = configuracion.getNMutaciones();
-	                int fNiteraciones = configuracion.getNIteraciones();
-	                String txt = configuracion.getMatrixtxt();
-	                String dir = configuracion.getDirect();
-	                int frec = configuracion.getCatastrof();
-
-	                short[][] IndBase = new short[fCantEInicial][fNmutaciones];
-	                int[] NPoblacion = new int[fCantEInicial];
-	                int[] Alimento = new int[fCantEInicial];
-
-	                model = variablesPanel.getModel();
-	                model2 = variablesPanel.getModel2();
-
-	                for (int j = 0; j < fCantEInicial; j++) {
-	                    NPoblacion[j] = Integer.parseInt(model2.getValueAt(j, 0).toString());
-	                    Alimento[j] = Integer.parseInt(model2.getValueAt(j, 1).toString());
-	                    for (int i = 0; i < fNmutaciones; i++) {
-	                        Short cellVal = Short.parseShort(model.getValueAt(j, i).toString());
-	                        IndBase[j][i] = cellVal;
-	                    }
-	                }
-
-	                int ronda0 = 0;
+				int ronda0 = 0;
 			        
-			        float[][] ProbIndividuo= new float[4][fNmutaciones];
+				float[][] ProbIndividuo= new float[4][fNmutaciones];
 
-			        float maxPMut=1;
-			        float maxCRep=NPoblacion[0]*5;
-			        float maxCAlim=maxCRep;
-			        float maxCMov=maxPMut;
+				float maxPMut=1;
+				float maxCRep=NPoblacion[0]*5;
+				float maxCAlim=maxCRep;
+				float maxCMov=maxPMut;
 			        
 			        
-			        // agresividad del medio: valor por el que puede morir una especie aleatoria cada cierto tiempo
+				// agresividad del medio: valor por el que puede morir una especie aleatoria cada cierto tiempo
 			        // ley de los grandes numeros - gauss, bioestadistica
 			        
-			        ProbIndividuo[0]=Generados.RandomIntegerArray(fNmutaciones, 0.4f, maxPMut, 1.5f); // PROB MUTACIÓN
+				ProbIndividuo[0]=Generados.RandomIntegerArray(fNmutaciones, 0.4f, maxPMut, 1.5f); // PROB MUTACIÓN
 			        //ProbIndividuo[1]=Generados.RandomIntegerArray(Nmutaciones, 1f, maxCRep, 0.5f); // CAPACIDAD REPARTO bajar mucho
-			        ProbIndividuo[2]=Generados.RandomIntegerArray(fNmutaciones, 1f, maxCAlim, 1f); // COSTE ALIMENTO
-			        ProbIndividuo[3]=Generados.RandomIntegerArray(fNmutaciones, 0.2f, maxCMov, 2f); // CAPACIDAD MOVIMIENTO inhibición por contacto
-			        ProbIndividuo=readMatrixFromFile(txt);
+				ProbIndividuo[2]=Generados.RandomIntegerArray(fNmutaciones, 1f, maxCAlim, 1f); // COSTE ALIMENTO
+				ProbIndividuo[3]=Generados.RandomIntegerArray(fNmutaciones, 0.2f, maxCMov, 2f); // CAPACIDAD MOVIMIENTO inhibición por contacto
+				ProbIndividuo=Funciones.readMatrixFromFile(txt);
 			        
 			        
 			        Generados GrupoBase= new Generados();
@@ -139,11 +146,11 @@ public class MainController {
 			        
 			        //mainFrame.clearTabs();
 			     
-			        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial,directorio, frecCat, mainFrame);
+			        GrupoBaseWorker worker = new GrupoBaseWorker(NuevoGrupo1,ProbIndividuo,nrondas,fCantEInicial,directorio, frecCat);
 			        worker.execute();
 
 			        
-					for (int i = 0; i < ProbIndividuo.length; i++) {
+					/*for (int i = 0; i < ProbIndividuo.length; i++) {
 			            // Iterar sobre las columnas de la matriz
 			            for (int j = 0; j < ProbIndividuo[i].length; j++) {
 			                // Imprimir el elemento en la posición i, j
@@ -151,31 +158,9 @@ public class MainController {
 			            }
 			            // Imprimir un salto de línea después de imprimir cada fila
 			            System.out.println();
-			        }
+			        }*/
 	            }
 	        });
-	    }
-		
-		private float[][] readMatrixFromFile(String filename) {
-	        float[][] matrix = new float[4][];
-	        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-	            String line;
-	            int row = 0;
-	            while ((line = br.readLine()) != null) {
-	                String[] values = line.split(" ");
-	                if (row < 4) {
-	                    matrix[row] = new float[values.length];  // assuming square matrix for simplicity
-	                
-	                    for (int col = 0; col < values.length; col++) {
-	                    	matrix[row][col] = Float.parseFloat(values[col]);
-	                    }
-	                }
-	                row++;
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        return matrix;
 	    }
 		
 		
