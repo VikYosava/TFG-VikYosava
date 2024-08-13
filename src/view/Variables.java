@@ -83,7 +83,7 @@ public class Variables extends JPanel{
         }
         
         // CONTROLLER
-		tableMutaciones.addMouseListener(new MouseAdapter() {
+		/*tableMutaciones.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				int inc = e.getButton() == MouseEvent.BUTTON1?1:-1;
 
@@ -96,7 +96,7 @@ public class Variables extends JPanel{
 			
 			
 			}
-		});
+		});*/
 		
 		scrollPane=new JScrollPane(tableMutaciones);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);

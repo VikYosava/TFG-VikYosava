@@ -79,6 +79,7 @@ public class MainController {
 				
 				configInicial=new ConfigInicial();
 				mainFrame.goBackToMainFrame(configInicial);
+				//mainFrame.getConfigInicialPanel().getBtnOkk().removeActionListener(null);
 				initialize();
 			}
 		});
@@ -112,6 +113,8 @@ public class MainController {
 			        
 				float[][] ProbIndividuo= new float[4][fNmutaciones];
 
+				float[][] ProbIndividuoAux= new float[4][fNmutaciones];
+				
 				float maxPMut=1;
 				float maxCRep=NPoblacion[0]*5;
 				float maxCAlim=maxCRep;
@@ -120,13 +123,28 @@ public class MainController {
 			        
 				// agresividad del medio: valor por el que puede morir una especie aleatoria cada cierto tiempo
 			        // ley de los grandes numeros - gauss, bioestadistica
-			        
-				ProbIndividuo[0]=Generados.RandomIntegerArray(fNmutaciones, 0.4f, maxPMut, 1.5f); // PROB MUTACIÓN
-			        //ProbIndividuo[1]=Generados.RandomIntegerArray(Nmutaciones, 1f, maxCRep, 0.5f); // CAPACIDAD REPARTO bajar mucho
-				ProbIndividuo[2]=Generados.RandomIntegerArray(fNmutaciones, 1f, maxCAlim, 1f); // COSTE ALIMENTO
-				ProbIndividuo[3]=Generados.RandomIntegerArray(fNmutaciones, 0.2f, maxCMov, 2f); // CAPACIDAD MOVIMIENTO inhibición por contacto
-				ProbIndividuo=Funciones.readMatrixFromFile(txt);
-			        
+			    
+				ProbIndividuoAux[0]=Generados.RandomIntegerArray(fNmutaciones, 0.4f, maxPMut, 1.5f); // PROB MUTACIÓN
+			    ProbIndividuoAux[1]=Generados.RandomIntegerArray(fNmutaciones, 0f, maxCRep, 0.0f); // CAPACIDAD REPARTO bajar mucho
+				ProbIndividuoAux[2]=Generados.RandomIntegerArray(fNmutaciones, 1f, maxCAlim, 1f); // COSTE ALIMENTO
+				ProbIndividuoAux[3]=Generados.RandomIntegerArray(fNmutaciones, 0.2f, maxCMov, 2f); // CAPACIDAD MOVIMIENTO inhibición por contacto
+				
+				try {
+					ProbIndividuo=Funciones.readMatrixFromFile(txt);
+					if(ProbIndividuo==null||ProbIndividuo.length!=4) {
+				        throw new IllegalArgumentException("Formato incorrecto: número de filas inválido.");
+					}
+					for (int i = 0; i < ProbIndividuo.length; i++) {
+				        if (ProbIndividuo[i] == null || ProbIndividuo[i].length != fNmutaciones) {
+				            throw new IllegalArgumentException("Formato incorrecto: número de columnas inválido en la fila " + i);
+				        }
+				    }
+				}
+				catch(Exception e1){
+					System.out.println("Error en el formato del archivo: " + e1.getMessage());
+					ProbIndividuo=new float[4][];
+					ProbIndividuo=ProbIndividuoAux;
+				}
 			        
 			        Generados GrupoBase= new Generados();
 			        for(int x=0; x<fCantEInicial;x++) {

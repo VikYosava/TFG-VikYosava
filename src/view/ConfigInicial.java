@@ -87,7 +87,7 @@ public class ConfigInicial extends JPanel{
 		lblTablaMut.setBounds(500, 70, 175, 13);
 		add(lblTablaMut);
 		
-		lblCarpetaSalida = new JLabel("Tabla Mutaciones (\"nombre.txt\")");
+		lblCarpetaSalida = new JLabel("Carpeta para Imágenes (\"nombre\")");
 		lblCarpetaSalida.setBounds(500, 150, 175, 13);
 		add(lblCarpetaSalida);
 		
