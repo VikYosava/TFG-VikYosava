@@ -2,10 +2,15 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComponent;
 
@@ -14,18 +19,72 @@ public class MyChartMultiline extends JComponent {
         //Clave: identificado de la especie
         // Chartline guarda el color de la linea de esa especie y los puntos
         
+        private LinkedList<Generados> listOfGenerados;
+        private List<String> codigos;
         private int steps; 
         private int maxValue;
         
         private Color lineColor;
         
-        MyChartMultiline(int steps){
+        MyChartMultiline(LinkedList<Generados> listOfGenerados){
         	chartMatrix = new HashMap<>();
-        	this.steps = steps;
+        	this.listOfGenerados=listOfGenerados;
+        	this.steps = listOfGenerados.size();
         	this.maxValue = 0;
+        	this.codigos=new ArrayList<>();
+        	for(int z=0;z<listOfGenerados.get(steps-1).size();z++) {
+        		int especiesGeneracion =listOfGenerados.get(steps-1).getGeneracionID(z);
+        		String especiesText = java.util.Arrays.toString(listOfGenerados.get(steps-1).getEspecieID(z));
+        		this.codigos.add("Generación: "+especiesGeneracion+" Especie: " + especiesText);
+        	}
+        	
+            addMouseMotionListener(new MouseMotionListener() {
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    handleMouseMove(e);
+                }
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    // No necesitamos manejar arrastrar en este caso
+                }
+            });
         	
         }
-        public void updateList(int id, List<Integer> line){
+        
+        public void updateList() {
+        	for (int j = 0; j < listOfGenerados.get(steps-1).size(); j++) {
+          		 List<Integer> populationData = new ArrayList<>();
+
+              	 for (int i = 0; i < steps; i++) {
+              		 
+              		 if(j<listOfGenerados.get(i).size()) {
+                  		 populationData.add(listOfGenerados.get(i).getCantID(j));
+              		 }
+
+              	 }
+              	ChartLine aux = chartMatrix.get(j);
+                if(aux == null) {
+                	float r = (float) Math.random();
+                    float g = (float) Math.random();
+                    float b = (float) Math.random();
+                	
+                	Color col = new Color(r, g, b);
+                    aux = new ChartLine(col, populationData);
+                }else {
+                	aux.setPoints(populationData);
+                	
+                }
+                chartMatrix.put(j, aux);
+                
+                int temp = Collections.max(populationData);
+                if(maxValue< temp)
+            		maxValue = temp;
+                repaint();
+               }
+        }
+        
+        /*public void updateList(int id, List<Integer> line){
             //System.out.println("updateList()");
             ChartLine aux = chartMatrix.get(id);
             if(aux == null) {
@@ -45,7 +104,7 @@ public class MyChartMultiline extends JComponent {
             if(maxValue< temp)
         		maxValue = temp;
             repaint();
-        }
+        }*/
 
         @Override
         public void paint(Graphics g) {
@@ -149,4 +208,49 @@ public class MyChartMultiline extends JComponent {
             g.drawRect(50, 0, getWidth() - 50, getHeight() - 30);
         }
         
+        public void handleMouseMove(MouseEvent e) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+
+            for (Map.Entry<Integer, ChartLine> entry : chartMatrix.entrySet()) {
+                ChartLine line = entry.getValue();
+
+                if (isNearLine(mouseX, mouseY, line)) {
+                    setToolTipText(codigos.get(entry.getKey()));
+                    return;
+                }
+            }
+
+            setToolTipText(null);
+        }
+        
+        private boolean isNearLine(int mouseX, int mouseY, ChartLine line) {
+            int width = getWidth() - 50;
+            int height = getHeight() - 50;
+
+            float hDiv = (float) width / (float) (line.size() - 1);
+            float vDiv = (float) height / (float) maxValue;
+
+            int tolerance = 5; // Tolerancia para considerar que el ratón está cerca de la línea
+
+            for (int i = 0; i < line.size() - 1; i++) {
+                int value1 = line.get(i) != null ? line.get(i) : 0;
+                int value2 = line.get(i + 1) != null ? line.get(i + 1) : 0;
+
+                int x1 = (int) (i * hDiv) + 50;
+                int y1 = getHeight() - 30 - (int) (value1 * vDiv);
+                int x2 = (int) ((i + 1) * hDiv) + 50;
+                int y2 = getHeight() - 30 - (int) (value2 * vDiv);
+
+                // Calcular la distancia desde el punto del ratón a la línea
+                double distance = Math.abs((y2 - y1) * mouseX - (x2 - x1) * mouseY + x2 * y1 - y2 * x1)
+                        / Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+
+                if (distance <= tolerance) {
+                    return true; // El ratón está cerca de esta línea
+                }
+            }
+
+            return false; // El ratón no está cerca de ninguna línea
+        }
     }

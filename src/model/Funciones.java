@@ -31,10 +31,12 @@ import org.graphstream.ui.swing_viewer.ViewPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 public class Funciones {
 
-
+	
 	
 	public static Viewer GenerarGrafo(Generados grupo, int cantEini) {
         Graph grafoFinal=new SingleGraph("Poblaciones");
@@ -155,7 +157,7 @@ public class Funciones {
         Graph grafoFinal=new SingleGraph("Poblaciones");
 		System.setProperty("org.graphstream.ui", "swing");
 		// Se crean los nodos padre
-		int cantmax=40;	
+		int cantmax=100;	
 		int cantmin=3;
 	
 		
@@ -295,33 +297,42 @@ public class Funciones {
 
         // Assuming each Generados object has population data accessible
         int steps = listOfGenerados.size(); // Number of generations
-        MyChartMultiline chart = new MyChartMultiline(steps);
+        MyChartMultiline chart = new MyChartMultiline(listOfGenerados);
 
-        
-        //listOfGenerados.size es el número de generaciones
-        
         // cada lista listOfGenerados.get(i) contiene 1 valor de todas las poblaciones
         
         // cada linea del array debe contener todos los valores de 1 generación
         
         //int sizeGeneradosFinal=listOfGenerados.get(steps-1).size();
-		for (int j = 0; j < listOfGenerados.get(steps-1).size(); j++) {
+		
+        chart.updateList();
+        /*for (int j = 0; j < listOfGenerados.get(steps-1).size(); j++) {
    		 List<Integer> populationData = new ArrayList<>();
 
        	 for (int i = 0; i < steps; i++) {
        		 
        		 if(j<listOfGenerados.get(i).size()) {
-       			 //System.out.println(listOfGenerados.get(i).getCantID(j));
            		 populationData.add(listOfGenerados.get(i).getCantID(j));
        		 }
 
        	 }
             chart.updateList(j, populationData);
 
-        }
+        }*/
 
 		JScrollPane scrollPane = new JScrollPane(chart);
         frame.add(scrollPane);
+        frame.addMouseMotionListener(new MouseMotionListener() {
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    chart.handleMouseMove(e);
+                }
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    // No necesitamos manejar arrastrar en este caso
+                }
+            });
         frame.setVisible(true);
 	}
 	

@@ -15,6 +15,7 @@ import org.graphstream.ui.view.Viewer;
 
 import model.Funciones;
 import model.Generados;
+import model.MyChartMultiline;
 import view.MainFrame;
 
 import org.graphstream.graph.Graph;
@@ -43,7 +44,7 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 		System.setProperty("org.graphstream.ui", "swing");
 		FileSinkImages f = FileSinkImages.createDefault();
         f.setOutputType(FileSinkImages.OutputType.PNG);
-        f.setResolution(Resolutions.VGA);
+        f.setResolution(Resolutions.UHD_4K);
         f.setLayoutPolicy(LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);
         
 		LinkedList<Generados> listOfGenerados=new LinkedList<>();
@@ -106,6 +107,7 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 
 	protected void done() {
 		try {
+			
 			
 			Funciones.GenerarLineas((LinkedList<Generados>) get());
 			//MainFrame.showChartPanel(Funciones.GenerarLineas((LinkedList<Generados>) get()));

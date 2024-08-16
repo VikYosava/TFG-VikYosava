@@ -11,6 +11,7 @@ public class Grafo extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JScrollPane scrollPane;
+	
 	/**
 	 * Create the panel.
 	 */
@@ -25,4 +26,6 @@ public class Grafo extends JPanel {
 		add(scrollPane, BorderLayout.CENTER);
 		
 	}
+	
+	
 }
