@@ -152,8 +152,8 @@ public class MainController {
 			        	GrupoBase.addGenerado(NPoblacion[x], IndBase[x], padre, ronda0, Alimento[x]);
 			        }
 
-			        System.out.println("\nPoblaciones:");
-			        GrupoBase.imprimirDatosGenerados();
+			        //System.out.println("\nPoblaciones:");
+			        //GrupoBase.imprimirDatosGenerados();
 			        
 			        Generados NuevoGrupo1=GrupoBase.clone().Generacion(ProbIndividuo, 1);
 			        

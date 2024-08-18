@@ -1,4 +1,7 @@
 package model;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -31,10 +34,28 @@ public class Generados {
     	cont++;
     }
 
-    public void imprimirDatosGenerados() {
-        for (PoblacionPorEspecie info : elements) {
-            info.imprimirInformacion();
+    public void imprimirDatosGenerados(String filePath, float[][] probIndividuo) throws IOException {
+        
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+		writer.write("@relation poblaciones\n\n");
+		writer.write("@attribute nombre string\n");
+		for(int i=0;i<elements.get(0).getEspecie().length;i++) {
+			writer.write("@attribute c"+i+" {0, 1}\n");
+		}
+		writer.write("@attribute mutationProb numeric\n");
+		writer.write("@attribute refoodCap numeric\n");
+		writer.write("@attribute alimentCost numeric\n");
+		writer.write("@attribute movementCap numeric\n");
+		writer.write("@attribute generation integer\n");
+
+		writer.write("@attribute size integer\n\n");
+
+		writer.write("@data\n");		
+    	for (PoblacionPorEspecie info : elements) {
+            info.escribirDatos(writer, filePath, probIndividuo);
         }
+    	
+    	writer.close();
     }
     // Usar esto solo si es necesario, en principio no hará falta porque las poblaciones
     // aumentan en la posición en la que aparecen

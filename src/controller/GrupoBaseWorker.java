@@ -53,7 +53,7 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 		
 		Generados nGrupo=nuevoGrupo;
     	listOfGenerados.add(nGrupo.clone());
-
+    	String filePath=null;
 		// Recrea una generación por cada ronda
 		for(int i=1;i<=nrondas;i++) {
         	//System.out.println("gen i:"+i);
@@ -84,7 +84,7 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 	        publish(grafoprueba);
 	        
 	        // LAURA: captura de las imagenes 1 a nrondas
-	        String filePath =outputDir+"graph"+i+".png";			
+	         filePath =outputDir+"graph"+i+".png";			
 	        f.writeAll(grafoprueba, filePath);
 	        
 	        // LAURA:
@@ -100,7 +100,7 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 	        listOfGenerados.add(prov);
 
         }
-		
+		nGrupo.imprimirDatosGenerados("C:/Users/vikto/git/TFGVY/TFG3/Imagenes/poblaciones.arff", probIndividuo);
 		
 		return listOfGenerados;
     }
