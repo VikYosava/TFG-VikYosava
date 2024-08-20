@@ -66,7 +66,7 @@ public class ConfigInicial extends JPanel{
 		add(fDirect);
 		
 		ffCatastrof = new JFormattedTextField();
-		ffCatastrof.setText("5");
+		ffCatastrof.setText("500");
 		ffCatastrof.setBounds(300, 170, 175, 19);
 		add(ffCatastrof);
 		

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.JFrame;
 import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import model.Generados;
 
@@ -34,17 +36,24 @@ public class PopulationSimulation {
         // ley de los grandes numeros - gauss, bioestadistica
         
         ProbIndividuo[0]=Generados.RandomIntegerArray(Nmutaciones, 0.0f, maxPMut, 2f); // PROB MUTACIÓN
-        //ProbIndividuo[1]=Generados.RandomIntegerArray(Nmutaciones, 1f, maxCRep, 0.5f); // CAPACIDAD REPARTO bajar mucho
+        ProbIndividuo[1]=Generados.RandomIntegerArray(Nmutaciones, 1f, maxCRep, 0.5f); // CAPACIDAD REPARTO bajar mucho
         ProbIndividuo[2]=Generados.RandomIntegerArray(Nmutaciones, 1f, maxCAlim, 1f); // COSTE ALIMENTO
         ProbIndividuo[3]=Generados.RandomIntegerArray(Nmutaciones, 0.5f, maxCMov, 2f); // CAPACIDAD MOVIMIENTO inhibición por contacto
-
         
+        float[][] ProbIndividuom={
+                {0.2f, 0.2f, 0.2f, 0.2f, -0.1f, -0.9f, -0.3f, -0.5f, -0.4f, -0.5f},
+                {0.5f, -0.2f, 0.4f, -0.2f, 0.3f, -0.1f, 0.3f, -0.1f, -0.3f, -0.4f},
+                {0.15f, -0.3f, 0.4f, -0.7f, 0.15f, -0.8f, 0.15f, -0.15f, -0.4f, -0.5f},
+                {0.3f, 0.5f, -0.1f, -0.1f, 0.6f, -0.1f, 0.2f, -0.1f, 0.3f, 0.5f}
+            };
+        
+        ProbIndividuo=ProbIndividuom;
         
         Generados GrupoBase= new Generados();
-        //GrupoBase.addGenerado(TPoblacion, IndBase, ronda0, Alimento);
+        GrupoBase.addGenerado(TPoblacion, IndBase, null, ronda0, Alimento);
         
         System.out.println("\nPoblaciones:");
-        GrupoBase.imprimirDatosGenerados();
+        GrupoBase.escribirPorSistema();
         
         Generados NuevoGrupo1=GrupoBase.clone().Generacion(ProbIndividuo, 1);
         
@@ -74,10 +83,10 @@ public class PopulationSimulation {
         // Imprimir la información de NuevoGrupo si es necesario
         
         System.out.println("\nPoblaciones:");
-        GrupoBase.imprimirDatosGenerados();
+        GrupoBase.escribirPorSistema();;
         
         System.out.println("\nNuevo Grupo:");
-        NuevoGrupo1.imprimirDatosGenerados();
+        NuevoGrupo1.escribirPorSistema();;
         
         for (int i = 0; i < ProbIndividuo.length; i++) {
             // Iterar sobre las columnas de la matriz

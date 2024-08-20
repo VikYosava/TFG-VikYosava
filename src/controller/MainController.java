@@ -153,7 +153,7 @@ public class MainController {
 			        }
 
 			        //System.out.println("\nPoblaciones:");
-			        //GrupoBase.imprimirDatosGenerados();
+			        //GrupoBase.escribirPorSistema();
 			        
 			        Generados NuevoGrupo1=GrupoBase.clone().Generacion(ProbIndividuo, 1);
 			        

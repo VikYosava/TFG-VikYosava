@@ -33,9 +33,17 @@ public class MyChartMultiline extends JComponent {
         	this.maxValue = 0;
         	this.codigos=new ArrayList<>();
         	for(int z=0;z<listOfGenerados.get(steps-1).size();z++) {
+        		
         		int especiesGeneracion =listOfGenerados.get(steps-1).getGeneracionID(z);
-        		String especiesText = java.util.Arrays.toString(listOfGenerados.get(steps-1).getEspecieID(z));
-        		this.codigos.add("Generación: "+especiesGeneracion+" Especie: " + especiesText);
+        		String especiesText = " Pos. Mut.: ";
+        		for(int h=0;h<listOfGenerados.get(steps-1).getEspecieID(z).length;h++) {
+        			if(listOfGenerados.get(steps-1).getEspecieID(z)[h]==1){
+            			int hnum=h+1;
+        				especiesText+=hnum+" ";
+        			}
+        		}
+        		
+        		this.codigos.add("Gen.: "+especiesGeneracion+ especiesText);
         	}
         	
             addMouseMotionListener(new MouseMotionListener() {
@@ -138,8 +146,13 @@ public class MyChartMultiline extends JComponent {
             
             graphics2d.setColor(Color.LIGHT_GRAY);
             float vDiv = (float) (height - 50) / (float) maxValue;
-            for (int i = 0; i <= maxValue; i += 10) {
+            float yStep = maxValue/10;
+            yStep+=50-yStep%10;
+            for (int i = 0; i <= maxValue; i += yStep) {
                 int yPosition = height - 30 - (int) (i * vDiv);
+                if (yPosition >= height) {
+                    yPosition = height - 1; // Ajuste para evitar valores fuera de los límites
+                }
                 graphics2d.drawString(String.valueOf(i), 10, yPosition);
             }
             
@@ -159,7 +172,9 @@ public class MyChartMultiline extends JComponent {
 
             // Dibuja líneas horizontales cada 50 unidades
             float vDiv = (float) (height - 50) / (float) maxValue;
-            for (int i = 0; i <= maxValue; i += 10) {
+            float yStep = maxValue/10;
+            yStep+=50-yStep%10;
+            for (int i = 0; i <= maxValue; i += yStep) {
                 int yPosition = height - 30 - (int) (i * vDiv);
                 graphics2d.drawLine(50, yPosition, width, yPosition);
             }
@@ -185,25 +200,7 @@ public class MyChartMultiline extends JComponent {
             			(int)((i+1)*hDiv)+50,
             			getHeight()-30-(int)(value2*vDiv)
             		);
-            	
-                /*int value1, value2;
-                if(line.get(i)==null){
-                    value1 = 0;
-                }else{
-                    value1 = line.get(i);
-                }
-                if(line.get(i+1)==null){
-                    value2 = 0;
-                }else{
-                    value2 = line.get(i+1);
-                }
-                
-                g.drawLine(
-                        (int)(i*hDiv), 
-                        height - ((int)(value1*vDiv)),
-                        (int)((i+1)*hDiv), 
-                        height - ((int)(value2*vDiv)));
-            }*/
+
             }
             g.drawRect(50, 0, getWidth() - 50, getHeight() - 30);
         }

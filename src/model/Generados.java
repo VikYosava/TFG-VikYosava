@@ -9,10 +9,12 @@ import java.util.Random;
 
 public class Generados {
 	
-    private static final float CMovBase = 0.1f; //	[3]	 Minimo 0, máximo 1 (Capacidad de recolección, incluir comer comida dentro del movimiento)
-	private static final float CAlimBase = 0f; //	[2]	 Mínimo 0, Nmax=NinicialInd*X siendo X variable por el usuario, 5 de base
-	private static final float CRepartoBase = 1f; //[1]	 Mínimo 1, Nmax=NinicialInd*X siendo X variable por el usuario, 5 de base
+	private static final float Amortiguacion = 2.0f;
 	private static final float PMutBase = 0.5f; //	[0]	 Minimo 0, máximo 1
+	private static final float CapAlimBase = 0.3f; //[1]	 Minimo 0, Nmax=NinicialInd*X siendo X variable por el usuario, 5 de base
+	private static final float CostAlimBase = 0.25f; //	[2]	 Mínimo 0, Nmax=NinicialInd*X siendo X variable por el usuario, 5 de base
+    private static final float CMovBase = 0.6f; //	[3]	 Minimo 0, máximo 1 (Capacidad de recolección, incluir comer comida dentro del movimiento)
+
 	private LinkedList<PoblacionPorEspecie> elements; 
     private int cont;
 	private int cantGlobal;
@@ -34,11 +36,10 @@ public class Generados {
     	cont++;
     }
 
-    public void imprimirDatosGenerados(String filePath, float[][] probIndividuo) throws IOException {
+    public void imprimirDatosGenerados(String filePath, float[][] probIndividuo, int nGeneraciones) throws IOException {
         
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 		writer.write("@relation poblaciones\n\n");
-		writer.write("@attribute nombre string\n");
 		for(int i=0;i<elements.get(0).getEspecie().length;i++) {
 			writer.write("@attribute c"+i+" {0, 1}\n");
 		}
@@ -47,12 +48,12 @@ public class Generados {
 		writer.write("@attribute alimentCost numeric\n");
 		writer.write("@attribute movementCap numeric\n");
 		writer.write("@attribute generation integer\n");
-
-		writer.write("@attribute size integer\n\n");
+		writer.write("@attribute size integer\n");
+		writer.write("@attribute success {no, yes}\n\n");
 
 		writer.write("@data\n");		
     	for (PoblacionPorEspecie info : elements) {
-            info.escribirDatos(writer, filePath, probIndividuo);
+            info.escribirDatos(writer, filePath, probIndividuo, nGeneraciones);
         }
     	
     	writer.close();
@@ -165,6 +166,12 @@ public class Generados {
     	return elements.get(index).getPosicion();
     }
     
+    public void escribirPorSistema() {
+        for (PoblacionPorEspecie info : elements) {
+            info.imprimirInformacion();
+        }
+    }
+    
     public static float[] RandomIntegerArray(int nmutaciones, float base, float max, float deviation) {
         float[] array = new float[nmutaciones]; // nmutaciones también se utilizará para dividir cada valor
         //la suma de todos debe ser aproximadamente la media
@@ -207,8 +214,14 @@ public class Generados {
     			
     		
     		float CMov=CMovBase;
+    		float CapAlim=CapAlimBase;
+    		float CostAlim=CostAlimBase;
+    		float PMut=PMutBase;
     		
 			for(int k = 0; k<probIndividuo[3].length; k++) {
+				PMut=PMut+probIndividuo[0][k]*nuevoGrupo.getEspecieID(i)[k];
+				CapAlim=CapAlim+probIndividuo[1][k]*nuevoGrupo.getEspecieID(i)[k];
+				CostAlim=CostAlim+probIndividuo[2][k]*nuevoGrupo.getEspecieID(i)[k];
 				CMov=CMov+probIndividuo[3][k]*nuevoGrupo.getEspecieID(i)[k];
 			}
 			
@@ -217,26 +230,40 @@ public class Generados {
 			}
 			else if(CMov>1) {
 				CMov=1;
-				alimento++;
+			}
+			
+			if(CapAlim<0) {
+				CapAlim=0;
+			}
+			
+			if(CostAlim<0) {
+				CostAlim=0;
+			}
+			
+    		// Este valor indica la cantidad de alimento necesaria por cada célula para reproducirse
+    		// Puede aumentar o disminuir según las mutaciones.
+			// El valor base será 1, 1 célula inicial proporciona 1 alimento base, como una moneda de cambio.
+    		// El valor inicial debería ser 1 o superior ya que las células no pueden reproducirse de la nada, pero la simulación
+    		// tendría que ser demasiado grande para mi máquina si quiero que funcione bajo estas condiciones (muchas células iniciales)
+    		// lo cual tampoco es realista del todo, porque en teoría deberían formarse solo unas pocas células iniciales en la sopa
+    		// primigenia.
+    		// En este caso, por tanto, asumiremos que la sopa primigenia aporta alimento extra a todas las células, por lo que el
+    		// coste inicial es menor de 1.
+			
+			
+			if(PMut<0) {
+				PMut=0;
 			}
 			
     		
-    		for (int k = 0; k<cantInd*CMov;k++) {
+    		/*for (int k = 0; k<cantInd*CMov;k++) {
     			
     			int posAtacado=(int) (Math.random()*(nuevoGrupo.getTotal()-nuevoGrupo.getCantID(i)))+nuevoGrupo.getCantID(i);
-    			
-    			//System.out.println("i: "+i);
-    			//System.out.println("Total: "+nuevoGrupo.getTotal());
-    			//int num=nuevoGrupo.getTotal()-i;
-    			//System.out.println("Total-i: "+num);
-    			//System.out.println("posAtacado: "+posAtacado);
     			
     			int iAtacado=nuevoGrupo.getPosicion(posAtacado);
     			while (nuevoGrupo.getCantID(iAtacado)==0){ // dentro de getpos
     				iAtacado++;
     			}
-    			
-    			//System.out.println("iAtacado: "+iAtacado);
     			
     			// HACER UN GENERADOR DE NÚMEROS ALEATORIOS QUE ELIJA CON PRIORIDAD LA ESPECIE CON MÁS INDIVIDUOS
     			// 1. OPERACIÓN GENERA UN ARRAY DE LAS CANTIDADES DE CADA ESPECIE array
@@ -279,187 +306,76 @@ public class Generados {
     			// se restan individuos si mueren, se suma alimento si matan o generan de alguna forma
     			// pob.menosCant() si muere alguien;
     			
-    		}
+    		}*/
     		
-    		int cantInd1=cantInd;
     		//
     		
     		// PROCESO DE VIDA, CALCULA CUANTOS SOBREVIVEN Y LA CANTIDAD DE ALIMENTO QUE OBTIENEN DE MUTACIONES
     		// alimentoCoste contiene un numero real que indica la cantidad de alimento necesaria por individuo
     		// se calcula a partir de la matriz de probabilidades
-    		
-
-    		float CAlim=CAlimBase;
-    		
-			for(int k = 0; k<probIndividuo[2].length; k++) {
-				CAlim=CAlim+probIndividuo[2][k]*nuevoGrupo.getEspecieID(i)[k];
-			}
-			
-			if(CAlim<0) {
-				CAlim=0;
-			}
 			
 			
-    		
-    		// Este valor indica la cantidad de alimento necesaria por cada célula para reproducirse
-    		// Puede aumentar o disminuir según las mutaciones.
-			// El valor base será 1, 1 célula inicial proporciona 1 alimento base, como una moneda de cambio.
-    		// El valor inicial debería ser 1 o superior ya que las células no pueden reproducirse de la nada, pero la simulación
-    		// tendría que ser demasiado grande para mi máquina si quiero que funcione bajo estas condiciones (muchas células iniciales)
-    		// lo cual tampoco es realista del todo, porque en teoría deberían formarse solo unas pocas células iniciales en la sopa
-    		// primigenia.
-    		// En este caso, por tanto, asumiremos que la sopa primigenia aporta alimento extra a todas las células, por lo que el
-    		// coste inicial es menor de 1.
-			
-		
-    		//Generados2
-			
-			//System.out.println("cantInd: "+cantInd);
-			//System.out.println("alimento*alimentoCoste: "+alimento*alimentoCoste);
-			
-			float CReparto=CRepartoBase;
-			for(int k = 0; k<probIndividuo[1].length; k++) {
-				CReparto=CReparto+probIndividuo[1][k]*nuevoGrupo.getEspecieID(i)[k];
-			}
-			
-			if(CReparto<1) {
-				CReparto=1;
-			}
-			
-			
-			int Nvivos=(int) (cantInd*CMov*CReparto); // Si cantmov es 0 significa que no han interactuado por cuenta propia
+			float NuevoAlimento=cantInd*CMov*CapAlim; // Si cantmov es 0 significa que no han interactuado por cuenta propia
 												// Debe haber un caso a parte si tienen forma de generar alimento por si mismos
 											// Si reparto es 1, no se da alimento a los individuos que no lo obtengan
 										// El núm max de reparto sería el de individuos de la población, pero en la práctica
 									// este número no hará falta casi, y es dificil de calcular cada vez, por lo que 
 								// es mejor fijar alguna heurística. Nmax=NinicialInd*X siendo X variable por el usuario, 5 de base
-							// 
-			if(Nvivos>cantInd){
-				Nvivos=cantInd;
+			float AlimentoConsumido=cantInd*CMov*CostAlim;
+			float DiferenciaAlimento=NuevoAlimento-AlimentoConsumido;
+			alimento=alimento+DiferenciaAlimento;
+
+			if(DiferenciaAlimento<0) {
+				cantInd=(int) (cantInd+DiferenciaAlimento);
+				// El número de la cantidad de individuos solo se reduce en esta parte, debido a que la reproducción se
+				// lleva a cabo siempre, sea la cantidad de alimento mayor o no, a menos que mueran todos los individuos
+				// Y esta reproducción debe calcularse de manera más compleja
 			}
 			
-			if(CAlim!=0) {
-				if(alimento/CAlim<Nvivos) { // Si hay menos comida de la que es necesaria para sobrevivir, el exceso muere
-	    			
-					Nvivos=(int) (alimento/CAlim);
-					alimento=1;
+			if(cantInd>0) {
+				float PMuttot=PMut;
+
+				if(PMut>1) {
+					PMut=1;
+				}
+				
+				// Se determina cuántos se van a reproducir, se asume que crear un individuo igual cuesta el 
+				// mismo alimento que sobrevivir
+				// Solo se puede reproducir cada individuo una vez, no puede haber
+				// un número de individuos que se reproducen mayor del número de individuos que existen
+				int Nreprod=cantInd;
+				if(CostAlim>0) {
+					Nreprod=(int) ((alimento/CostAlim)*CMov);
+				}
+				if(Nreprod>cantInd){
+					Nreprod=cantInd;
+				}
+				alimento=alimento-Nreprod*CostAlim;
+				
+				for (int j=0; j<((int)(Nreprod*PMut)); j++) {
+	    			// LA REPRODUCCIÓN AQUI TIENE QUE SER SOLO DE LOS QUE SÍ MUTAN
+					short[] Padre=nuevoGrupo.getEspecieID(i).clone();
+					String padreStr=java.util.Arrays.toString(Padre)+i;
+	    			short[] Hijo=Reproducir(nuevoGrupo.getEspecieID(i),PMuttot);
+	    			nuevoGrupo.addGenerado(1, Hijo, padreStr, generacion, NuevoAlimento);
+	    		// i es la posición de la población que se está reproduciendo	
+	    			// Padre es el código genético, junto con la generación en la	    			
+	    			/*
+	    			if(mismoGenoma(Hijo,nuevoGrupo.getEspecieID(i))) {
+	    				cantInd++;
+	    				nuevoGrupo.setAlimentoID(i,1); // Calcular Alimento mejor
+	    				nuevoGrupo.setCantID(i,cantInd);    				
+	    			}
+	    			else{
+	    				nuevoGrupo.addGenerado(1, Hijo, generacion, 1);
+	    			}*/
 	    		}
-			}
-			else {
-				Nvivos=cantInd; // Si el coste de vivir es 0, el número de individuos se mantiene igual
-			}
-			cantInd=Nvivos;
-			nuevoGrupo.setAlimentoID(i,alimento);
-			nuevoGrupo.setCantID(i,cantInd);
-			
-			
-			
-			
-			/*System.out.println("Cantidad:"+cantInd);
-			System.out.println("Cantidad Antes:"+cantInd1);
-			System.out.println("");*/
-			
-			//System.out.println("Num Reprod:"+cantInd*CMov*CReparto);
-			
-			
-			
-			// 
-			
-			float PMut=PMutBase;
-			for(int k = 0; k<probIndividuo[0].length; k++) {
-				PMut=PMut+probIndividuo[0][k]*nuevoGrupo.getEspecieID(i)[k];
-			}
-						
-			
-			
-			if(PMut<0) {
-				PMut=0;
-			}
-			
-			float PMuttot=PMut;
-
-			
-			if(PMut>1) {
-				PMut=1;
-			}
-			
-			
-			int Nreprod=Nvivos;
-			
-			// Se determina cuántos se van a reproducir, se asume que crear un individuo igual cuesta el 
-			// mismo alimento que sobrevivir
-			if(alimento<Nvivos) {
-				Nreprod=(int) alimento;
-			}
-			alimento=alimento*CAlim;
-			
-			if(Nreprod>cantInd){
-				Nreprod=cantInd;
-			}
-			
-			// Se calcula cuantos se pueden reproducir
-			/*System.out.println("cantInd: "+cantInd);
-			System.out.println("Nreprod: "+Nreprod);
-			System.out.println("Nreprod: "+Nreprod*PMut);*/
-			
-			for (int j=0; j<((int)(Nreprod*PMut)); j++) {
-			    
-
-    			
-
-    			// LA REPRODUCCIÓN AQUI TIENE QUE SER SOLO DE LOS QUE SÍ MUTAN
-				short[] Padre=nuevoGrupo.getEspecieID(i).clone();
+				//System.out.println(Nreprod);
+				nuevoGrupo.setAlimentoID(i,alimento);
+				nuevoGrupo.setCantID(i,(int) (cantInd+(Nreprod-Nreprod*PMut)));
 				
-				String padreStr=java.util.Arrays.toString(Padre)+i;
-				
-    			short[] Hijo=Reproducir(nuevoGrupo.getEspecieID(i),PMuttot);
-
-    			nuevoGrupo.addGenerado(1, Hijo, padreStr, generacion, 1);
-    			
-    			//int lastPos=nuevoGrupo.size()-1;
-    			
-    			
-    		// i es la posición de la población que se está reproduciendo	
-    			//nuevoGrupo.get(lastPos).setPadre(Padre);
-    			
-    			//System.out.println(nuevoGrupo.get(lastPos).getPadre());
-    			// Padre es el código genético, junto con la generación en la
-    			
-    			//System.out.println("Hijo: " + lastPos);
-
-    			//System.out.println("Padre: " + Padre+i);
-    			
-    			
-    			/*
-    			//System.out.println("Anterior:"+java.util.Arrays.toString(nuevoGrupo.get(i).getEspecie()));
-    			//System.out.println("NuevoGrp:"+java.util.Arrays.toString(Hijo));
-
-				//System.out.println(mismoGenoma(Hijo,nuevoGrupo.get(i).getEspecie()));
-				
-    			if(mismoGenoma(Hijo,nuevoGrupo.getEspecieID(i))) {
-    				cantInd++;
-    				nuevoGrupo.setAlimentoID(i,1); // Calcular Alimento mejor
-    				nuevoGrupo.setCantID(i,cantInd);
-    				//System.out.println("Nuevo no añadido:" + java.util.Arrays.toString(nuevoGrupo.get(i).getEspecie()));
-    				
-    			}
-    			else{
-    				
-    				nuevoGrupo.addGenerado(1, Hijo, generacion, 1);
-    				//System.out.println("Nuevo añadido");
-    				//System.out.println("Generacion: "+generacion);
-    			}*/
-    			
-    		}
-			
-			
-			
-			
-			nuevoGrupo.setCantID(i,(int) (cantInd+(Nreprod-Nreprod*PMut)));
-			
-			
-			
-			
+			}
+		
 			/*for (int z = 0; z<cantInd*CMov*CReparto;z++) { // Solo se reproducen si hay algún individuo vivo
 	    		if(alimento<cantInd*CAlim) { // Si hay menos comida de la que es necesaria para sobrevivir, el exceso muere
 	    			cantInd=(int) (alimento*CAlim);
@@ -468,42 +384,31 @@ public class Generados {
 	    		}
 	    		else {
 		    		for (int j=0; j<(alimento-cantInd*CAlim); j++) {
-		    			
 		    			double PMut=0.1;
 		    			for(int k = 0; k<ProbIndividuo[0].length; k++) {
 		    				PMut=PMut+ProbIndividuo[0][k]*nuevoGrupo.getEspecieID(i)[k];
 		    			}
-		    			
-
 		    			// LA REPRODUCCIÓN AQUI TIENE QUE SER SOLO DE LOS QUE SÍ MUTAN
 		    			short[] Hijo=Reproducir(nuevoGrupo.getEspecieID(i).clone(),PMut);
-		    			//System.out.println("Anterior:"+java.util.Arrays.toString(nuevoGrupo.get(i).getEspecie()));
-		    			//System.out.println("NuevoGrp:"+java.util.Arrays.toString(Hijo));
-
-	    				//System.out.println(mismoGenoma(Hijo,nuevoGrupo.get(i).getEspecie()));
-	    				
+		    			
 		    			if(mismoGenoma(Hijo,nuevoGrupo.getEspecieID(i))) {
 		    				cantInd++;
 		    				nuevoGrupo.setAlimentoID(i,1); // Calcular Alimento mejor
-		    				nuevoGrupo.setCantID(i,cantInd);
-		    				//System.out.println("Nuevo no añadido:" + java.util.Arrays.toString(nuevoGrupo.get(i).getEspecie()));
-		    				
+		    				nuevoGrupo.setCantID(i,cantInd);		    				
 		    			}
 		    			else{
 		    				nuevoGrupo.addGenerado(1, Hijo, generacion, 1);
-		    				//System.out.println("Nuevo añadido");
 		    			}
-		    			
 		    		}
 	    		}
     		}*/
-    		
-    		
+
+    		}
+    		if(nuevoGrupo.getCantID(i)<0) {
+    			nuevoGrupo.setCantID(i, 0);
     		}
     	}
-    	
     	//generacion++;
-    	
 		return nuevoGrupo;
     }
 

@@ -302,23 +302,8 @@ public class Funciones {
         // cada lista listOfGenerados.get(i) contiene 1 valor de todas las poblaciones
         
         // cada linea del array debe contener todos los valores de 1 generación
-        
-        //int sizeGeneradosFinal=listOfGenerados.get(steps-1).size();
 		
         chart.updateList();
-        /*for (int j = 0; j < listOfGenerados.get(steps-1).size(); j++) {
-   		 List<Integer> populationData = new ArrayList<>();
-
-       	 for (int i = 0; i < steps; i++) {
-       		 
-       		 if(j<listOfGenerados.get(i).size()) {
-           		 populationData.add(listOfGenerados.get(i).getCantID(j));
-       		 }
-
-       	 }
-            chart.updateList(j, populationData);
-
-        }*/
 
 		JScrollPane scrollPane = new JScrollPane(chart);
         frame.add(scrollPane);

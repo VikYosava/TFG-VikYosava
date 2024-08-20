@@ -72,9 +72,9 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 	                	if(nGrupo.getEspecieID(j)[posicion]==binario) {
 	                		nGrupo.setCantID(j, 0);
 	                		//System.out.println("Eliminado en ronda: "+i);
-	                		nGrupo.get(j).imprimirInformacion();
+	                		//nGrupo.get(j).imprimirInformacion();
 	                	}
-	                
+	                	
 	                }
 	        	}
 	        	
@@ -84,7 +84,7 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 	        publish(grafoprueba);
 	        
 	        // LAURA: captura de las imagenes 1 a nrondas
-	         filePath =outputDir+"graph"+i+".png";			
+	        filePath =outputDir+"graph"+i+".png";			
 	        f.writeAll(grafoprueba, filePath);
 	        
 	        // LAURA:
@@ -100,14 +100,15 @@ public class GrupoBaseWorker extends SwingWorker<List<Generados>, Graph> {
 	        listOfGenerados.add(prov);
 
         }
-		nGrupo.imprimirDatosGenerados("C:/Users/vikto/git/TFGVY/TFG3/Imagenes/poblaciones.arff", probIndividuo);
+		nGrupo.imprimirDatosGenerados("C:/Users/vikto/git/TFGVY/TFG3/Imagenes/poblaciones.arff", probIndividuo, nrondas);
 		
+		
+		//for(int y=0;y<listOfGenerados.get(nrondas).size();y++) {listOfGenerados.get(nrondas).get(y).imprimirInformacion();;}
 		return listOfGenerados;
     }
 
 	protected void done() {
 		try {
-			
 			
 			Funciones.GenerarLineas((LinkedList<Generados>) get());
 			//MainFrame.showChartPanel(Funciones.GenerarLineas((LinkedList<Generados>) get()));
