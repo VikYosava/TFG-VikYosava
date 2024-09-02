@@ -291,7 +291,7 @@ public class Funciones {
 	public static void GenerarLineas(LinkedList<Generados> listOfGenerados) {
 		
 		JFrame frame = new JFrame("Simulación de Poblaciones");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLayout(new GridLayout(1, 1)); // Single panel layout
 
